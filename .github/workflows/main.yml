@@ -20,6 +20,20 @@ jobs:
       - name: Tambah permission notifikasi
         run: |
           sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <application#' android/app/src/main/AndroidManifest.xml
+      - name: Bundle alarm sounds
+        run: |
+          RAW=android/app/src/main/res/raw
+          mkdir -p "$RAW"
+          cp www/sounds/*.wav "$RAW"/
+          shopt -s nullglob
+          names=""
+          for f in custom-sounds/*.mp3; do
+            n=$(basename "$f" .mp3 | tr 'A-Z' 'a-z' | sed 's/[^a-z0-9_]/_/g')
+            cp "$f" "$RAW/c_$n.mp3"
+            cp "$f" "www/sounds/c_$n.mp3"
+            names="$names\"$n\","
+          done
+          echo "[${names%,}]" > www/sounds.json
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
