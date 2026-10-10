@@ -79,15 +79,37 @@ input,select,textarea{width:100%;font-family:var(--read);font-size:17px;padding:
 .sep{border-top:3px dashed var(--line);margin:18px 0 4px}
 @media(max-width:430px){.brand small{display:none}.brand h1{font-size:19px}.logo{width:38px;height:38px}}
 
+
+button.sm{padding:6px 12px;font-size:14px;box-shadow:0 3px 0 var(--ink);border-radius:12px}
+button.tog{background:var(--paper);color:var(--ink-soft);padding:6px 14px;font-size:14px;border-radius:999px;box-shadow:0 3px 0 var(--ink)}
+button.tog.on{background:var(--sn);color:#fff}
+.pill{display:inline-block;font-family:var(--display);font-weight:600;font-size:12px;background:#FFF1BF;border:2px solid var(--ink);border-radius:999px;padding:0 9px;margin-left:6px;vertical-align:middle}
+.alrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:2px dashed var(--line)}
+.alrow b{font-family:var(--display);font-size:24px}
+.alrow small{display:block;color:var(--ink-soft);font-size:13px}
+.acts{display:flex;gap:8px;align-items:center}
+.sndrow{display:flex;gap:8px;align-items:center}
+.sndrow select{flex:1;min-width:0}
+.sndrow button{flex:none}
+.box{background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:12px;margin-top:14px}
+.box.off .flds{opacity:.45;pointer-events:none}
+.box .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.box .top b{font-family:var(--display);font-size:17px}
+.hint{font-size:13px;color:var(--ink-soft);margin:8px 0 0}
+.ringbox{text-align:center}
+.ringbox .bell{font-size:64px;line-height:1}
+body.sub .logo{display:none}
 </style>
 </head>
 <body>
+
 <div class="bar">
   <button class="icon hide" id="btnBack">←</button>
   <div class="brand"><svg class="logo" viewBox="0 0 1024 1024" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B3C6E"/><stop offset="1" stop-color="#1F2A44"/></linearGradient></defs><rect width="1024" height="1024" rx="230" fill="url(#lg)"/><rect x="214" y="250" width="596" height="560" rx="70" fill="#FFF3C9"/><path d="M214 320a70 70 0 0 1 70-70h456a70 70 0 0 1 70 70v90H214z" fill="#E0463B"/><rect x="330" y="190" width="40" height="120" rx="20" fill="#FFB800"/><rect x="654" y="190" width="40" height="120" rx="20" fill="#FFB800"/><circle cx="512" cy="600" r="150" fill="#fff" stroke="#1F2A44" stroke-width="22"/><path d="M512 510v95l62 40" fill="none" stroke="#1F2A44" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1>ProSchedule</h1><small>Jadual · Schedule</small></div></div>
   <div class="r">
     <button class="icon" id="btnLang">BM|EN</button>
-    <button class="icon" id="btnSet">🔔</button>
+    <button class="icon" id="btnAlarm">🔔</button>
+    <button class="icon" id="btnCfg">⚙️</button>
   </div>
 </div>
 
@@ -104,6 +126,23 @@ input,select,textarea{width:100%;font-family:var(--read);font-size:17px;padding:
   <div class="card"><b id="dayTitle"></b><div id="hours"></div></div>
 </div>
 
+<!-- popup ringkasan hari -->
+<div class="modal" id="mDay"><div class="sheet">
+  <h2 id="dpTitle"></h2>
+  <div id="dpList"></div>
+  <div class="box" id="dpBox">
+    <div class="top"><b data-i="dpAlarm"></b><button class="tog" id="dpOn">OFF</button></div>
+    <div class="flds">
+      <label data-i="dpTime"></label><select id="dpTime"></select>
+      <label data-i="fSound"></label>
+      <div class="sndrow"><select id="dpSound"></select><button class="icon" id="dpPlay">▶</button></div>
+      <p class="hint" data-i="dpHint"></p>
+    </div>
+  </div>
+  <div class="row"><button class="ghost" id="dpClose" data-i="close"></button><button id="dpEdit" data-i="edit"></button></div>
+</div></div>
+
+<!-- tambah jadual -->
 <div class="modal" id="mEv"><div class="sheet">
   <h2 data-i="addHead"></h2>
   <label data-i="fTitle"></label><input id="evTitle">
@@ -114,20 +153,36 @@ input,select,textarea{width:100%;font-family:var(--read);font-size:17px;padding:
   <div class="row"><button class="ghost" id="evCancel" data-i="cancel"></button><button id="evSave" data-i="save"></button></div>
 </div></div>
 
-<div class="modal" id="mSet"><div class="sheet">
-  <h2 data-i="setHead"></h2>
-  <div id="dgList"></div>
-  <label data-i="newTime"></label>
-  <input type="time" id="dgTime" value="20:00">
-  <label data-i="showFor"></label>
-  <select id="dgFor"></select>
-  <div class="row"><button id="dgAdd" data-i="addBtn"></button></div>
+<!-- senarai alarm -->
+<div class="modal" id="mAlarm"><div class="sheet">
+  <h2 data-i="alarmHead"></h2>
+  <div id="alList"></div>
+  <div class="box">
+    <div class="top"><b data-i="newAlarm"></b></div>
+    <label data-i="fTime"></label><input type="time" id="alTime" value="20:00">
+    <label data-i="fRepeat"></label><select id="alRep"></select>
+    <label data-i="fSound"></label>
+    <div class="sndrow"><select id="alSound"></select><button class="icon" id="alPlay">▶</button></div>
+    <div class="row"><button id="alAdd" data-i="addAlarm"></button></div>
+  </div>
+  <div class="row"><button class="ghost" id="alClose" data-i="close"></button></div>
+</div></div>
+
+<!-- tetapan -->
+<div class="modal" id="mCfg"><div class="sheet">
+  <h2 data-i="cfgHead"></h2>
+  <label data-i="sndLib"></label>
+  <div id="cfgSnd"></div>
+  <div class="row"><button id="mp3Add" data-i="addMp3"></button></div>
+  <input type="file" id="mp3In" accept="audio/*" class="hide">
+  <p class="hint" data-i="mp3Note"></p>
   <div class="sep"></div>
   <h2 data-i="testHead"></h2>
-  <label data-i="testSec"></label>
-  <input type="number" id="testSec" value="10" min="1" max="3600">
+  <label data-i="testSec"></label><input type="number" id="testSec" value="10" min="1" max="3600">
+  <label data-i="fSound"></label>
+  <div class="sndrow"><select id="tsSound"></select></div>
   <div class="row"><button id="testBtn" data-i="testBtn"></button></div>
-  <div class="row"><button class="ghost" id="dgClose" data-i="close"></button></div>
+  <div class="row"><button class="ghost" id="cfgClose" data-i="close"></button></div>
 </div></div>
 
 <div class="modal mid" id="mExit"><div class="sheet">
@@ -135,45 +190,65 @@ input,select,textarea{width:100%;font-family:var(--read);font-size:17px;padding:
   <div class="row"><button class="ghost" id="exNo" data-i="no"></button><button id="exYes" data-i="yes"></button></div>
 </div></div>
 
+<div class="modal mid" id="mRing"><div class="sheet ringbox">
+  <div class="bell">⏰</div>
+  <h2 id="ringT"></h2>
+  <p id="ringB"></p>
+  <div class="row"><button id="ringStop" data-i="ringStop"></button></div>
+</div></div>
+
 <script>
 const P = window.Capacitor && window.Capacitor.Plugins || {};
 const LN = P.LocalNotifications, APP = P.App;
 const TYPES = {Meeting:'#2C74E0', Deadline:'#E0463B', Tugasan:'#23A047', Peribadi:'#7B4FD0', Lain:'#EE8420'};
+const BUILTIN = [
+  {id:'alarm_classic', ms:'Klasik', en:'Classic'},
+  {id:'alarm_digital', ms:'Digital', en:'Digital'},
+  {id:'alarm_bell', ms:'Loceng', en:'Bell'},
+  {id:'alarm_chime', ms:'Loceng angin', en:'Wind chime'},
+  {id:'alarm_melody', ms:'Melodi', en:'Melody'},
+  {id:'alarm_siren', ms:'Siren', en:'Siren'},
+  {id:'alarm_soft', ms:'Lembut', en:'Soft'},
+  {id:'alarm_radar', ms:'Radar', en:'Radar'}
+];
+const DAYTIMES = ['22:00','22:30','23:00','23:30','00:00','00:30','01:00','01:30','02:00','02:30','03:00','03:30','04:00','04:30','05:00','05:30','06:00','06:30','07:00'];
 
 const I = {
  ms:{
   months:['Januari','Februari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember'],
   dow:['Ahd','Isn','Sel','Rab','Kha','Jum','Sab'],
   types:{Meeting:'Meeting',Deadline:'Tarikh Akhir',Tugasan:'Tugasan',Peribadi:'Peribadi',Lain:'Lain-lain'},
-  hint:'Tekan tarikh untuk lihat & tambah jadual',
+  hint:'Tekan tarikh untuk lihat ringkasan jadual',
   addHead:'Tambah Jadual', fTitle:'Tajuk', titlePh:'cth: Meeting dengan client', fType:'Jenis', fTime:'Masa', fRem:'Ingatkan sebelum', fNote:'Nota (pilihan)',
   r0:'Tepat pada masa', r10:'10 minit', r30:'30 minit', r60:'1 jam', r1440:'1 hari',
-  cancel:'Batal', save:'Simpan', add:'+ tambah',
-  setHead:'Masa Notifikasi Ringkasan', newTime:'Tambah masa baru', showFor:'Tunjuk jadual untuk',
-  forEsok:'Esok (sesuai untuk malam)', forIni:'Hari ini (sesuai untuk pagi)',
-  addBtn:'+ Tambah', del:'Padam', none:'Tiada masa notifikasi.', close:'Tutup',
-  lblEsok:'jadual esok', lblIni:'jadual hari ini',
+  cancel:'Batal', save:'Simpan', add:'+ tambah', close:'Tutup', edit:'✏️ Edit',
   confirmDel:'Padam jadual ini?', needTitle:'Sila isi tajuk',
   exitQ:'Keluar dari app?', yes:'Ya', no:'Tidak',
+  dpAlarm:'Alarm ringkasan jadual', dpTime:'Masa alarm (10 malam – 7 pagi)', dpHint:'Berbunyi malam sebelum (10 malam ke atas) atau pagi hari tersebut (sehingga 7 pagi).', dpEmpty:'Tiada jadual pada hari ini.',
+  alarmHead:'Senarai Alarm', newAlarm:'Alarm baru', fRepeat:'Ulang', once:'Sekali sahaja', daily:'Setiap hari', fSound:'Bunyi alarm', addAlarm:'+ Tambah ke senarai', noAlarm:'Tiada alarm.', del:'Padam',
+  lblEsok:'jadual esok', lblIni:'jadual hari ini',
+  cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini berbunyi apabila app dibuka atau notifikasi ditekan. Untuk bunyi penuh walaupun app ditutup, letak MP3 dalam folder custom-sounds di GitHub.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(dalam app)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
-  nTomorrow:'Jadual esok', nToday:'Jadual hari ini', noSched:'Tiada jadual.', nowTxt:'Sekarang', soon:'Akan datang', at:'pada', before:'ingatkan', early:'awal', day1:'1 hari', hr1:'1 jam', min:'min', testTitle:'Ujian ProSchedule', testBody:'Notifikasi berfungsi ✅'
+  ringStop:'Matikan',
+  nTomorrow:'Jadual esok', nToday:'Jadual hari ini', nDay:'Ringkasan jadual', noSched:'Tiada jadual.', nowTxt:'Sekarang', soon:'Akan datang', at:'pada', before:'ingatkan', early:'awal', day1:'1 hari', hr1:'1 jam', min:'min', testTitle:'Ujian ProSchedule', testBody:'Notifikasi berfungsi ✅'
  },
  en:{
   months:['January','February','March','April','May','June','July','August','September','October','November','December'],
   dow:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
   types:{Meeting:'Meeting',Deadline:'Deadline',Tugasan:'Task',Peribadi:'Personal',Lain:'Other'},
-  hint:'Tap a date to view & add schedule',
+  hint:'Tap a date to see its schedule summary',
   addHead:'Add Schedule', fTitle:'Title', titlePh:'e.g. Meeting with client', fType:'Type', fTime:'Time', fRem:'Remind before', fNote:'Note (optional)',
   r0:'At the time', r10:'10 minutes', r30:'30 minutes', r60:'1 hour', r1440:'1 day',
-  cancel:'Cancel', save:'Save', add:'+ add',
-  setHead:'Summary Notification Times', newTime:'Add new time', showFor:'Show schedule for',
-  forEsok:'Tomorrow (good for night)', forIni:'Today (good for morning)',
-  addBtn:'+ Add', del:'Delete', none:'No notification times.', close:'Close',
-  lblEsok:"tomorrow's schedule", lblIni:"today's schedule",
+  cancel:'Cancel', save:'Save', add:'+ add', close:'Close', edit:'✏️ Edit',
   confirmDel:'Delete this schedule?', needTitle:'Please enter a title',
   exitQ:'Exit the app?', yes:'Yes', no:'No',
+  dpAlarm:'Schedule summary alarm', dpTime:'Alarm time (10 PM – 7 AM)', dpHint:'Rings the night before (10 PM onwards) or that morning (until 7 AM).', dpEmpty:'Nothing scheduled on this day.',
+  alarmHead:'Alarm List', newAlarm:'New alarm', fRepeat:'Repeat', once:'Once', daily:'Every day', fSound:'Alarm sound', addAlarm:'+ Add to list', noAlarm:'No alarms.', del:'Delete',
+  lblEsok:"tomorrow's schedule", lblIni:"today's schedule",
+  cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play when the app is open or the notification is tapped. For full sound even when the app is closed, put the MP3 in the custom-sounds folder on GitHub.', mp3Big:'File too large (max 10MB).', appOnly:'(in-app)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
-  nTomorrow:"Tomorrow's schedule", nToday:"Today's schedule", noSched:'Nothing scheduled.', nowTxt:'Now', soon:'Coming up', at:'at', before:'remind', early:'early', day1:'1 day', hr1:'1 hour', min:'min', testTitle:'ProSchedule test', testBody:'Notifications work ✅'
+  ringStop:'Stop',
+  nTomorrow:"Tomorrow's schedule", nToday:"Today's schedule", nDay:'Schedule summary', noSched:'Nothing scheduled.', nowTxt:'Now', soon:'Coming up', at:'at', before:'remind', early:'early', day1:'1 day', hr1:'1 hour', min:'min', testTitle:'ProSchedule test', testBody:'Notifications work ✅'
  }
 };
 
@@ -181,35 +256,79 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad = n => String(n).padStart(2,'0');
 const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const J = (k, d) => { try{ const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; }catch(e){ return d; } };
 
-let events = JSON.parse(localStorage.getItem('ps_events') || '[]');
-let settings = JSON.parse(localStorage.getItem('ps_settings') || 'null') || {digests:[{t:'21:00',f:'esok'},{t:'07:00',f:'ini'}]};
+let events = J('ps_events', []);
+let dayAlarms = J('ps_dayalarms', {});
+let alarms = J('ps_alarms', null);
+if(!alarms){
+  const old = J('ps_settings', null);
+  alarms = old && old.digests ? old.digests.map((g,i) => ({id:i+1, t:g.t, rep:'daily', sound:'default', on:true}))
+    : [{id:1,t:'21:00',rep:'daily',sound:'default',on:true},{id:2,t:'07:00',rep:'daily',sound:'default',on:true}];
+}
+alarms = alarms.filter(a => !(a.rep==='once' && a.at && a.at < Date.now()));
 let counter = +(localStorage.getItem('ps_counter') || 1);
+let aCounter = +(localStorage.getItem('ps_acounter') || 100);
 let lang = localStorage.getItem('ps_lang') || 'ms';
 let view = new Date(); view.setDate(1);
 let selected = fmt(new Date());
 let evType = 'Meeting';
 let page = 'cal';
+let repoSounds = [], userSounds = [];
 const T = k => I[lang][k];
 
 function save(){
   localStorage.setItem('ps_events', JSON.stringify(events));
-  localStorage.setItem('ps_settings', JSON.stringify(settings));
+  localStorage.setItem('ps_dayalarms', JSON.stringify(dayAlarms));
+  localStorage.setItem('ps_alarms', JSON.stringify(alarms));
   localStorage.setItem('ps_counter', counter);
+  localStorage.setItem('ps_acounter', aCounter);
   resched();
 }
 
-function remLabel(r){ return r>=1440 ? T('day1') : r>=60 ? T('hr1') : r+' '+T('min'); }
-
-function applyLang(){
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-i]').forEach(el => el.textContent = T(el.dataset.i));
-  $('evTitle').placeholder = T('titlePh');
-  $('hint').textContent = T('hint');
-  $('evRem').innerHTML = [0,10,30,60,1440].map(v => `<option value="${v}">${T('r'+v)}</option>`).join('');
-  $('dgFor').innerHTML = `<option value="esok">${T('forEsok')}</option><option value="ini">${T('forIni')}</option>`;
-  renderCal(); renderDay(); renderTypes(); renderSet();
+/* ---------- sounds ---------- */
+function soundFile(id){
+  if(BUILTIN.some(b => b.id === id)) return id + '.wav';
+  if(/^c_/.test(id)) return id + '.mp3';
+  return null;
 }
+function allSounds(){
+  return [{id:'default', n:T('sndDefault')}]
+    .concat(BUILTIN.map(b => ({id:b.id, n:b[lang]})))
+    .concat(repoSounds.map(s => ({id:s.id, n:'🎵 '+s.n})))
+    .concat(userSounds.map(s => ({id:s.id, n:'📱 '+s.name+' '+T('appOnly')})));
+}
+function soundName(id){ const s = allSounds().find(x => x.id === id); return s ? s.n : T('sndDefault'); }
+function fillSound(sel, val){
+  const list = allSounds();
+  sel.innerHTML = list.map(s => `<option value="${esc(s.id)}">${esc(s.n)}</option>`).join('');
+  sel.value = list.some(s => s.id === val) ? val : 'default';
+}
+let audio = null;
+function stopAudio(){ if(audio){ try{ audio.pause(); }catch(e){} audio = null; } }
+function playSound(id, loop){
+  stopAudio();
+  let url = null;
+  const u = userSounds.find(s => s.id === id);
+  if(u) url = URL.createObjectURL(u.blob);
+  else { const f = soundFile(id); if(f) url = 'sounds/' + f; }
+  if(!url) return;
+  audio = new Audio(url); audio.loop = !!loop;
+  audio.play().catch(() => {});
+}
+
+/* IndexedDB for user-added mp3 */
+function idb(){ return new Promise((res,rej) => { const r = indexedDB.open('ps_db',1); r.onupgradeneeded = () => r.result.createObjectStore('snd',{keyPath:'id'}); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function idbAll(){ const db = await idb(); return new Promise((res,rej) => { const q = db.transaction('snd').objectStore('snd').getAll(); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+async function idbPut(o){ const db = await idb(); return new Promise((res,rej) => { const t = db.transaction('snd','readwrite'); t.objectStore('snd').put(o); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
+async function idbDel(id){ const db = await idb(); return new Promise((res,rej) => { const t = db.transaction('snd','readwrite'); t.objectStore('snd').delete(id); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
+
+/* ---------- calendar & day page ---------- */
+function dateTitle(ds){
+  const [y,m,d] = ds.split('-').map(Number);
+  return `${T('dow')[new Date(y,m-1,d).getDay()]}, ${d} ${T('months')[m-1]} ${y}`;
+}
+function remLabel(r){ return r>=1440 ? T('day1') : r>=60 ? T('hr1') : r+' '+T('min'); }
 
 function renderCal(){
   $('mon').textContent = `${T('months')[view.getMonth()]} ${view.getFullYear()}`;
@@ -224,12 +343,11 @@ function renderCal(){
     h += `<div class="day ${ds===today?'today':''} ${ds===selected?'sel':''}" data-d="${ds}">${d}${has?'<i class="dot"></i>':''}</div>`;
   }
   $('cal').innerHTML = h;
-  document.querySelectorAll('.day').forEach(el => el.onclick = () => { selected = el.dataset.d; renderCal(); renderDay(); showPage('day'); });
+  document.querySelectorAll('.day').forEach(el => el.onclick = () => { selected = el.dataset.d; renderCal(); renderDay(); openDay(); });
 }
 
 function renderDay(){
-  const [y,m,d] = selected.split('-').map(Number);
-  $('dayTitle').textContent = `${T('dow')[new Date(y,m-1,d).getDay()]}, ${d} ${T('months')[m-1]} ${y}`;
+  $('dayTitle').textContent = dateTitle(selected);
   let h = '';
   for(let hr=0; hr<24; hr++){
     const evs = events.filter(e => e.date===selected && +e.time.slice(0,2)===hr).sort((a,b)=>a.time.localeCompare(b.time));
@@ -252,44 +370,110 @@ function renderTypes(){
   $('evTypes').innerHTML = Object.keys(TYPES).map(t => `<span data-t="${t}" class="${t===evType?'on':''}" style="${t===evType?'background:'+TYPES[t]:''}">${T('types')[t]}</span>`).join('');
   document.querySelectorAll('#evTypes span').forEach(s => s.onclick = () => { evType = s.dataset.t; renderTypes(); });
 }
-
 function openEv(hr){
   $('evTitle').value=''; $('evNote').value=''; $('evRem').value='10';
   $('evTime').value = `${pad(hr)}:00`; evType='Meeting'; renderTypes();
   $('mEv').classList.add('on');
 }
 
-function renderSet(){
-  $('dgList').innerHTML = settings.digests.length ? settings.digests.map((g,i) =>
-    `<div class="dg"><span><b>${esc(g.t)}</b> — ${g.f==='esok'?T('lblEsok'):T('lblIni')}</span><button class="ghost" data-i2="${i}">${T('del')}</button></div>`).join('')
-    : `<div class="empty">${T('none')}</div>`;
-  document.querySelectorAll('#dgList button').forEach(b => b.onclick = () => { settings.digests.splice(+b.dataset.i2,1); save(); renderSet(); });
+/* ---------- day popup (summary + day alarm) ---------- */
+function dayAlarm(){ return dayAlarms[selected] || {on:false, t:'22:00', sound:'default'}; }
+function renderDayPopup(){
+  $('dpTitle').textContent = dateTitle(selected);
+  const evs = events.filter(e => e.date === selected).sort((a,b) => a.time.localeCompare(b.time));
+  $('dpList').innerHTML = evs.length
+    ? evs.map(e => `<div class="ev" style="border-left-color:${TYPES[e.type]}"><div><b>${esc(e.time)} ${esc(e.title)}</b><small>${esc(T('types')[e.type])}${e.note?' • '+esc(e.note):''}</small></div></div>`).join('')
+    : `<div class="empty">${T('dpEmpty')}</div>`;
+  const a = dayAlarm();
+  $('dpOn').textContent = a.on ? 'ON' : 'OFF';
+  $('dpOn').classList.toggle('on', a.on);
+  $('dpBox').classList.toggle('off', !a.on);
+  $('dpTime').value = DAYTIMES.includes(a.t) ? a.t : '22:00';
+  fillSound($('dpSound'), a.sound);
 }
+function openDay(){ renderDayPopup(); $('mDay').classList.add('on'); }
+function setDayAlarm(patch){
+  dayAlarms[selected] = Object.assign({}, dayAlarm(), patch);
+  save(); renderDayPopup();
+}
+$('dpOn').onclick = () => setDayAlarm({on: !dayAlarm().on});
+$('dpTime').onchange = () => setDayAlarm({t: $('dpTime').value});
+$('dpSound').onchange = () => setDayAlarm({sound: $('dpSound').value});
+$('dpPlay').onclick = () => playSound($('dpSound').value);
+$('dpClose').onclick = () => { stopAudio(); $('mDay').classList.remove('on'); };
+$('dpEdit').onclick = () => { stopAudio(); $('mDay').classList.remove('on'); renderDay(); showPage('day'); };
 
-/* ---------- navigation & back button ---------- */
-function showPage(p){
-  page = p;
-  $('pgCal').classList.toggle('hide', p!=='cal');
-  $('pgDay').classList.toggle('hide', p!=='day');
-  $('btnBack').classList.toggle('hide', p==='cal');
-  window.scrollTo(0,0);
+/* ---------- alarm list ---------- */
+function renderAlarms(){
+  const list = alarms.slice().sort((a,b) => a.t.localeCompare(b.t));
+  $('alList').innerHTML = list.length ? list.map(a =>
+    `<div class="alrow"><div><b>${esc(a.t)}</b><span class="pill">${a.rep==='daily'?T('daily'):T('once')}</span><small>${esc(soundName(a.sound))} • ${+a.t.slice(0,2)>=12?T('lblEsok'):T('lblIni')}</small></div>
+     <div class="acts"><button class="tog ${a.on?'on':''}" data-tg="${a.id}">${a.on?'ON':'OFF'}</button><button class="ghost sm" data-rm="${a.id}">×</button></div></div>`).join('')
+    : `<div class="empty">${T('noAlarm')}</div>`;
+  document.querySelectorAll('[data-tg]').forEach(b => b.onclick = () => { const a = alarms.find(x => x.id === +b.dataset.tg); a.on = !a.on; save(); renderAlarms(); });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { alarms = alarms.filter(x => x.id !== +b.dataset.rm); save(); renderAlarms(); });
 }
-function goBack(){
-  const open = ['mExit','mEv','mSet'].find(id => $(id).classList.contains('on'));
-  if(open === 'mExit'){ $('mExit').classList.remove('on'); return; }
-  if(open){ $(open).classList.remove('on'); return; }
-  if(page === 'day'){ showPage('cal'); return; }
-  $('mExit').classList.add('on');
-}
-if(APP && APP.addListener) APP.addListener('backButton', goBack);
-$('btnBack').onclick = goBack;
-$('exNo').onclick = () => $('mExit').classList.remove('on');
-$('exYes').onclick = () => { if(APP && APP.exitApp) APP.exitApp(); else window.close(); };
+$('btnAlarm').onclick = () => { renderAlarms(); fillSound($('alSound'), $('alSound').value); $('mAlarm').classList.add('on'); };
+$('alClose').onclick = () => { stopAudio(); $('mAlarm').classList.remove('on'); };
+$('alPlay').onclick = () => playSound($('alSound').value);
+$('alAdd').onclick = () => {
+  const t = $('alTime').value; if(!t) return;
+  if(alarms.length >= 90) return;
+  const a = {id: aCounter++, t, rep: $('alRep').value, sound: $('alSound').value, on: true};
+  if(a.rep === 'once'){
+    const d = new Date(); const [hh,mm] = t.split(':').map(Number); d.setHours(hh,mm,0,0);
+    if(d <= new Date()) d.setDate(d.getDate()+1);
+    a.at = d.getTime();
+  }
+  alarms.push(a); stopAudio(); save(); renderAlarms();
+};
 
-/* ---------- buttons ---------- */
-$('btnLang').onclick = () => { lang = lang==='ms' ? 'en' : 'ms'; localStorage.setItem('ps_lang', lang); applyLang(); resched(); };
-$('btnSet').onclick = () => { renderSet(); $('mSet').classList.add('on'); };
-$('dgClose').onclick = () => $('mSet').classList.remove('on');
+/* ---------- settings: sound library, mp3, test ---------- */
+function renderCfg(){
+  $('cfgSnd').innerHTML = allSounds().filter(s => s.id !== 'default').map(s =>
+    `<div class="dg"><span>${esc(s.n)}</span><span class="acts"><button class="icon sm" data-pl="${esc(s.id)}">▶</button>${/^cs_/.test(s.id)?`<button class="ghost sm" data-ds="${esc(s.id)}">×</button>`:''}</span></div>`).join('');
+  document.querySelectorAll('[data-pl]').forEach(b => b.onclick = () => playSound(b.dataset.pl));
+  document.querySelectorAll('[data-ds]').forEach(b => b.onclick = async () => {
+    stopAudio();
+    try{ await idbDel(b.dataset.ds); }catch(e){}
+    userSounds = userSounds.filter(s => s.id !== b.dataset.ds);
+    let ch = false;
+    alarms.forEach(a => { if(a.sound === b.dataset.ds){ a.sound = 'default'; ch = true; } });
+    Object.keys(dayAlarms).forEach(k => { if(dayAlarms[k].sound === b.dataset.ds){ dayAlarms[k].sound = 'default'; ch = true; } });
+    if(ch) save();
+    refreshSoundUI();
+  });
+}
+function refreshSoundUI(){
+  renderCfg(); renderAlarms();
+  fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value);
+}
+$('btnCfg').onclick = () => { refreshSoundUI(); $('mCfg').classList.add('on'); };
+$('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
+$('mp3Add').onclick = () => $('mp3In').click();
+$('mp3In').onchange = async () => {
+  const f = $('mp3In').files[0]; $('mp3In').value = '';
+  if(!f) return;
+  if(f.size > 10*1024*1024){ alert(T('mp3Big')); return; }
+  const rec = {id:'cs_'+Date.now(), name:f.name.replace(/\.[^.]+$/,''), blob:f};
+  try{ await idbPut(rec); userSounds.push(rec); }catch(e){ alert(String(e)); }
+  refreshSoundUI();
+};
+
+const TEST_ID = 9999999;
+$('testBtn').onclick = async () => {
+  if(!LN){ alert(T('testNA')); return; }
+  try{
+    const perm = await LN.requestPermissions();
+    if(perm.display !== 'granted'){ alert(T('testDenied')); return; }
+    await ensureChannels();
+    const sec = Math.max(1, +$('testSec').value || 10);
+    await LN.schedule({notifications:[mk({id:TEST_ID, title:T('testTitle'), body:T('testBody'), schedule:{at:new Date(Date.now()+sec*1000), allowWhileIdle:true}}, $('tsSound').value)]});
+    alert(T('testOk').replace('{n}', sec));
+  }catch(err){ alert(String(err)); }
+};
+
+/* ---------- events form ---------- */
 $('evCancel').onclick = () => $('mEv').classList.remove('on');
 $('evSave').onclick = () => {
   const title = $('evTitle').value.trim();
@@ -297,69 +481,132 @@ $('evSave').onclick = () => {
   events.push({id:counter++, date:selected, time:$('evTime').value || '09:00', title, type:evType, rem:+$('evRem').value, note:$('evNote').value.trim()});
   save(); $('mEv').classList.remove('on'); renderCal(); renderDay();
 };
-$('dgAdd').onclick = () => {
-  if(!$('dgTime').value) return;
-  settings.digests.push({t:$('dgTime').value, f:$('dgFor').value});
-  settings.digests.sort((a,b)=>a.t.localeCompare(b.t));
-  save(); renderSet();
-};
 $('prev').onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
 $('next').onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
+$('btnLang').onclick = () => { lang = lang==='ms' ? 'en' : 'ms'; localStorage.setItem('ps_lang', lang); applyLang(); resched(); };
 
-/* ---------- test notification (seconds) ---------- */
-const TEST_ID = 9999999;
-$('testBtn').onclick = async () => {
-  if(!LN){ alert(T('testNA')); return; }
-  try{
-    const perm = await LN.requestPermissions();
-    if(perm.display !== 'granted'){ alert(T('testDenied')); return; }
-    const sec = Math.max(1, +$('testSec').value || 10);
-    await LN.schedule({notifications:[{id:TEST_ID, title:T('testTitle'), body:T('testBody'), schedule:{at:new Date(Date.now()+sec*1000), allowWhileIdle:true}}]});
-    alert(T('testOk').replace('{n}', sec));
-  }catch(err){ alert(String(err)); }
-};
+/* ---------- navigation & back button ---------- */
+const MODALS = ['mExit','mRing','mEv','mDay','mAlarm','mCfg'];
+function showPage(p){
+  page = p;
+  $('pgCal').classList.toggle('hide', p!=='cal');
+  $('pgDay').classList.toggle('hide', p!=='day');
+  $('btnBack').classList.toggle('hide', p==='cal');
+  document.body.classList.toggle('sub', p!=='cal');
+  window.scrollTo(0,0);
+}
+function goBack(){
+  const open = MODALS.find(id => $(id).classList.contains('on'));
+  if(open){ if(open !== 'mExit') stopAudio(); $(open).classList.remove('on'); return; }
+  if(page === 'day'){ showPage('cal'); return; }
+  $('mExit').classList.add('on');
+}
+if(APP && APP.addListener) APP.addListener('backButton', goBack);
+$('btnBack').onclick = goBack;
+$('exNo').onclick = () => $('mExit').classList.remove('on');
+$('exYes').onclick = () => { if(APP && APP.exitApp) APP.exitApp(); else window.close(); };
+$('ringStop').onclick = () => { stopAudio(); $('mRing').classList.remove('on'); };
 
-/* ---------- scheduling ---------- */
+/* ---------- notifications ---------- */
+function ring(n){
+  const snd = n && n.extra && n.extra.sound;
+  if(!snd || !userSounds.some(s => s.id === snd)) return;
+  $('ringT').textContent = n.title || ''; $('ringB').textContent = n.body || '';
+  playSound(snd, true); $('mRing').classList.add('on');
+}
+if(LN && LN.addListener){
+  LN.addListener('localNotificationActionPerformed', e => ring(e.notification));
+  LN.addListener('localNotificationReceived', n => ring(n));
+}
+const chanOf = id => soundFile(id) ? 'ps2_'+id : 'ps2_default';
+const mk = (o, snd) => Object.assign({}, o, {channelId: chanOf(snd), extra:{sound: snd || 'default'}}, soundFile(snd) ? {sound: soundFile(snd)} : {});
+
+async function ensureChannels(){
+  const ids = ['default'].concat(BUILTIN.map(b => b.id), repoSounds.map(s => s.id));
+  for(const id of ids){
+    const ch = {id:'ps2_'+id, name:'ProSchedule - '+soundName(id), importance:5, visibility:1, vibration:true};
+    const f = soundFile(id); if(f) ch.sound = f;
+    try{ await LN.createChannel(ch); }catch(e){}
+  }
+}
+function sumFor(ds){
+  const evs = events.filter(e => e.date===ds).sort((a,b)=>a.time.localeCompare(b.time));
+  return {
+    body: evs.length ? evs.map(e => `${e.time} ${e.title}`).join(' | ') : T('noSched'),
+    large: evs.length ? evs.map(e => `${e.time}  ${e.title} (${T('types')[e.type]})`).join('\n') : T('noSched')
+  };
+}
+
 async function resched(){
   if(!LN) return;
   try{
     const perm = await LN.requestPermissions();
     if(perm.display !== 'granted') return;
+    await ensureChannels();
     const p = await LN.getPending();
     const old = p.notifications.filter(n => n.id !== TEST_ID).map(n => ({id:n.id}));
     if(old.length) await LN.cancel({notifications: old});
     const list = [], now = new Date();
+
     events.forEach(e => {
       const d = new Date(`${e.date}T${e.time}:00`);
       const tn = T('types')[e.type];
-      if(d > now) list.push({id:e.id*2, title:`${tn}: ${e.title}`, body:`${T('nowTxt')} • ${e.time}`, schedule:{at:d, allowWhileIdle:true}});
+      if(d > now) list.push(mk({id:e.id*2, title:`${tn}: ${e.title}`, body:`${T('nowTxt')} • ${e.time}`, schedule:{at:d, allowWhileIdle:true}}, 'default'));
       if(e.rem > 0){
         const r = new Date(d.getTime() - e.rem*60000);
-        if(r > now) list.push({id:e.id*2+1, title:`${T('soon')}: ${e.title}`, body:`${tn} ${T('at')} ${e.time}`, schedule:{at:r, allowWhileIdle:true}});
+        if(r > now) list.push(mk({id:e.id*2+1, title:`${T('soon')}: ${e.title}`, body:`${tn} ${T('at')} ${e.time}`, schedule:{at:r, allowWhileIdle:true}}, 'default'));
       }
     });
-    for(let o=0; o<14; o++){
-      settings.digests.forEach((g,i) => {
-        const [hh,mm] = g.t.split(':').map(Number);
-        const at = new Date(); at.setDate(at.getDate()+o); at.setHours(hh,mm,0,0);
+
+    alarms.forEach((a,i) => {
+      if(!a.on) return;
+      const [hh,mm] = a.t.split(':').map(Number);
+      const off = hh >= 12 ? 1 : 0;
+      const times = a.rep === 'once' ? [new Date(a.at)] : Array.from({length:14}, (_,o) => { const d = new Date(); d.setDate(d.getDate()+o); d.setHours(hh,mm,0,0); return d; });
+      times.forEach((at,o) => {
         if(at <= now) return;
-        const target = new Date(at); if(g.f==='esok') target.setDate(target.getDate()+1);
-        const ds = fmt(target);
-        const evs = events.filter(e => e.date===ds).sort((a,b)=>a.time.localeCompare(b.time));
-        list.push({
-          id: 2000000 + o*100 + i,
-          title: `${g.f==='esok' ? T('nTomorrow') : T('nToday')} (${ds})`,
-          body: evs.length ? evs.map(e => `${e.time} ${e.title}`).join(' | ') : T('noSched'),
-          largeBody: evs.length ? evs.map(e => `${e.time}  ${e.title} (${T('types')[e.type]})`).join('\n') : T('noSched'),
-          schedule:{at, allowWhileIdle:true}
-        });
+        const tg = new Date(at); tg.setDate(tg.getDate()+off);
+        const ds = fmt(tg), s = sumFor(ds);
+        list.push(mk({id:2000000+o*100+i, title:`${off ? T('nTomorrow') : T('nToday')} (${ds})`, body:s.body, largeBody:s.large, schedule:{at, allowWhileIdle:true}}, a.sound));
       });
-    }
+    });
+
+    Object.keys(dayAlarms).forEach(ds => {
+      const a = dayAlarms[ds]; if(!a || !a.on) return;
+      const [hh,mm] = a.t.split(':').map(Number);
+      const base = new Date(ds+'T00:00:00');
+      const at = new Date(base); if(hh >= 22) at.setDate(at.getDate()-1); at.setHours(hh,mm,0,0);
+      if(at <= now) return;
+      const s = sumFor(ds);
+      list.push(mk({id:3000000+Math.floor(base.getTime()/86400000), title:`${T('nDay')} (${ds})`, body:s.body, largeBody:s.large, schedule:{at, allowWhileIdle:true}}, a.sound));
+    });
+
     if(list.length) await LN.schedule({notifications:list});
   }catch(err){ console.log('resched error', err); }
 }
 
-applyLang(); resched();
+/* ---------- language & init ---------- */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = T(el.dataset.i));
+  $('evTitle').placeholder = T('titlePh');
+  $('hint').textContent = T('hint');
+  const rv = $('evRem').value || '10';
+  $('evRem').innerHTML = [0,10,30,60,1440].map(v => `<option value="${v}">${T('r'+v)}</option>`).join('');
+  $('evRem').value = rv;
+  const rp = $('alRep').value || 'daily';
+  $('alRep').innerHTML = `<option value="once">${T('once')}</option><option value="daily">${T('daily')}</option>`;
+  $('alRep').value = rp;
+  $('dpTime').innerHTML = DAYTIMES.map(t => `<option value="${t}">${t}</option>`).join('');
+  renderCal(); renderDay(); renderTypes(); renderAlarms(); renderCfg(); renderDayPopup();
+  fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value);
+}
+async function init(){
+  try{ userSounds = await idbAll(); }catch(e){}
+  try{ const r = await fetch('sounds.json'); const a = await r.json(); repoSounds = a.map(n => ({id:'c_'+n, n})); }catch(e){}
+  applyLang(); save();
+}
+init();
 </script>
 </body>
 </html>
