@@ -17,6 +17,8 @@ jobs:
           java-version: 17
       - run: npm install
       - run: npx cap add android
+      - name: Channel notifikasi guna volume alarm
+        run: cp android-native/*.java android/app/src/main/java/com/proschedule/app/
       - name: Tambah permission notifikasi
         run: |
           sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <application#' android/app/src/main/AndroidManifest.xml
