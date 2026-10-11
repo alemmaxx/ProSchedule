@@ -305,11 +305,26 @@ function fillSound(sel, val){
   sel.value = list.some(s => s.id === val) ? val : 'default';
 }
 let audio = null;
-function stopAudio(){ if(audio){ try{ audio.pause(); }catch(e){} audio = null; } }
-function playSound(id, loop){
+const AP = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.registerPlugin) ? window.Capacitor.registerPlugin('AlarmPlayer') : null;
+const storedNative = new Set();
+const toB64 = blob => new Promise((res,rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+function stopAudio(){
+  if(audio){ try{ audio.pause(); }catch(e){} audio = null; }
+  if(AP){ try{ AP.stop().catch(() => {}); }catch(e){} }
+}
+async function playSound(id, loop){
   stopAudio();
-  let url = null;
   const u = userSounds.find(s => s.id === id);
+  if(AP){
+    try{
+      if(u){
+        if(!storedNative.has(id)){ await AP.store({id, data: await toB64(u.blob)}); storedNative.add(id); }
+        await AP.play({id, loop: !!loop}); return;
+      }
+      if(soundFile(id)){ await AP.playRaw({name:id, loop: !!loop}); return; }
+    }catch(e){ console.log('native play failed', e); }
+  }
+  let url = null;
   if(u) url = URL.createObjectURL(u.blob);
   else { const f = soundFile(id); if(f) url = 'sounds/' + f; }
   if(!url) return;
@@ -518,13 +533,13 @@ if(LN && LN.addListener){
   LN.addListener('localNotificationActionPerformed', e => ring(e.notification));
   LN.addListener('localNotificationReceived', n => ring(n));
 }
-const chanOf = id => soundFile(id) ? 'ps2_'+id : 'ps2_default';
+const chanOf = id => soundFile(id) ? 'ps3_'+id : 'ps3_default';
 const mk = (o, snd) => Object.assign({}, o, {channelId: chanOf(snd), extra:{sound: snd || 'default'}}, soundFile(snd) ? {sound: soundFile(snd)} : {});
 
 async function ensureChannels(){
   const ids = ['default'].concat(BUILTIN.map(b => b.id), repoSounds.map(s => s.id));
   for(const id of ids){
-    const ch = {id:'ps2_'+id, name:'ProSchedule - '+soundName(id), importance:5, visibility:1, vibration:true};
+    const ch = {id:'ps3_'+id, name:'ProSchedule - '+soundName(id), importance:5, visibility:1, vibration:true};
     const f = soundFile(id); if(f) ch.sound = f;
     try{ await LN.createChannel(ch); }catch(e){}
   }
