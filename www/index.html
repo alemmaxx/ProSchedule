@@ -180,9 +180,10 @@ body.sub .logo{display:none}
   <h2 data-i="testHead"></h2>
   <label data-i="testSec"></label><input type="number" id="testSec" value="10" min="1" max="3600">
   <label data-i="fSound"></label>
-  <div class="sndrow"><select id="tsSound"></select></div>
+  <div class="sndrow"><select id="tsSound"></select><button class="icon" id="tsPlay">▶</button></div>
   <div class="row"><button id="testBtn" data-i="testBtn"></button></div>
   <div class="row"><button class="ghost" id="cfgClose" data-i="close"></button></div>
+  <p class="hint" style="text-align:center">ProSchedule v3 · alarm volume + sounds</p>
 </div></div>
 
 <div class="modal mid" id="mExit"><div class="sheet">
@@ -476,6 +477,7 @@ $('mp3In').onchange = async () => {
 };
 
 const TEST_ID = 9999999;
+$('tsPlay').onclick = () => playSound($('tsSound').value);
 $('testBtn').onclick = async () => {
   if(!LN){ alert(T('testNA')); return; }
   try{
@@ -484,7 +486,7 @@ $('testBtn').onclick = async () => {
     await ensureChannels();
     const sec = Math.max(1, +$('testSec').value || 10);
     await LN.schedule({notifications:[mk({id:TEST_ID, title:T('testTitle'), body:T('testBody'), schedule:{at:new Date(Date.now()+sec*1000), allowWhileIdle:true}}, $('tsSound').value)]});
-    alert(T('testOk').replace('{n}', sec));
+    alert(T('testOk').replace('{n}', sec) + '\n♪ ' + soundName($('tsSound').value));
   }catch(err){ alert(String(err)); }
 };
 
