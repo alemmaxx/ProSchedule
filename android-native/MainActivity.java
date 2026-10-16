@@ -16,6 +16,7 @@ public class MainActivity extends BridgeActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     registerPlugin(AlarmPlayerPlugin.class);
+    registerPlugin(CalendarSyncPlugin.class);
     super.onCreate(savedInstanceState);
     setVolumeControlStream(AudioManager.STREAM_ALARM);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

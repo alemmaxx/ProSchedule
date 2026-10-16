@@ -99,6 +99,9 @@ button.tog.on{background:var(--sn);color:#fff}
 .ringbox{text-align:center}
 .ringbox .bell{font-size:64px;line-height:1}
 body.sub .logo{display:none}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.toprow b{font-family:var(--display);font-size:17px}
+.rowsel{font-size:14px;padding:6px 8px;margin-top:6px;border-radius:10px;max-width:210px}
 </style>
 </head>
 <body>
@@ -177,13 +180,33 @@ body.sub .logo{display:none}
   <input type="file" id="mp3In" accept="audio/*" class="hide">
   <p class="hint" data-i="mp3Note"></p>
   <div class="sep"></div>
+  <label data-i="evSnd"></label>
+  <div class="sndrow"><select id="evSndSel"></select><button class="icon" id="evSndPlay">▶</button></div>
+  <div class="sep"></div>
+  <h2 data-i="calHead"></h2>
+  <div class="row"><button id="accAdd" data-i="accAdd"></button></div>
+  <div class="row"><button class="ghost" id="accList" data-i="accList"></button></div>
+  <p class="hint" data-i="accHint"></p>
+  <div class="toprow"><b data-i="calSync"></b><button class="tog" id="calOn">OFF</button></div>
+  <div id="calFlds" class="hide">
+    <label data-i="calPick"></label><select id="calSel"></select>
+    <div class="row"><button id="calAll" data-i="calAll"></button></div>
+  </div>
+  <p class="hint" id="calMsg"></p>
+  <div class="toprow" style="margin-top:14px"><b data-i="impSync"></b><button class="tog" id="impOn">OFF</button></div>
+  <div id="impFlds" class="hide">
+    <label data-i="impPick"></label><div class="types" id="impList"></div>
+    <div class="row"><button id="impNow" data-i="impNow"></button></div>
+  </div>
+  <p class="hint" id="impMsg"></p>
+  <div class="sep"></div>
   <h2 data-i="testHead"></h2>
   <label data-i="testSec"></label><input type="number" id="testSec" value="10" min="1" max="3600">
   <label data-i="fSound"></label>
   <div class="sndrow"><select id="tsSound"></select><button class="icon" id="tsPlay">▶</button></div>
   <div class="row"><button id="testBtn" data-i="testBtn"></button></div>
   <div class="row"><button class="ghost" id="cfgClose" data-i="close"></button></div>
-  <p class="hint" style="text-align:center">ProSchedule v3 · alarm volume + sounds</p>
+  <p class="hint" style="text-align:center">ProSchedule v7 · alarm volume + sounds + kalendar + import Google</p>
 </div></div>
 
 <div class="modal mid" id="mExit"><div class="sheet">
@@ -231,6 +254,10 @@ const I = {
   cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini berbunyi apabila app dibuka atau notifikasi ditekan. Untuk bunyi penuh walaupun app ditutup, letak MP3 dalam folder custom-sounds di GitHub.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(dalam app)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
   ringStop:'Matikan',
+  accAdd:'Login / tambah akaun Google', accList:'Pilih dari senarai akaun', accHint:'Skrin akaun Google Android akan dibuka: pilih akaun dalam senarai atau tekan Tambah akaun untuk masuk manual. Selepas siap, kembali ke ProSchedule dan tekan ON di bawah.',
+  allDay:'Seharian', impSync:'Import jadual dari Google Calendar', impPick:'Kalendar yang diimport', impNow:'Sync dari Google sekarang', impDone:'Selesai: {n} jadual diimport.',
+  evSnd:'Bunyi notifikasi jadual (meeting, deadline)',
+  calHead:'Google Calendar (kalendar telefon)', calSync:'Sync jadual ke kalendar', calPick:'Pilih kalendar', calAll:'Sync semua jadual sekarang', calNone:'Tiada kalendar ditemui. Login akaun Google dalam telefon (Tetapan → Akaun).', calDenied:'Kebenaran Kalendar tidak diberi. Sila benarkan di Tetapan telefon.', calNA:'Hanya berfungsi dalam APK.', calDone:'Selesai: {n} jadual dihantar ke kalendar.',
   nTomorrow:'Jadual esok', nToday:'Jadual hari ini', nDay:'Ringkasan jadual', noSched:'Tiada jadual.', nowTxt:'Sekarang', soon:'Akan datang', at:'pada', before:'ingatkan', early:'awal', day1:'1 hari', hr1:'1 jam', min:'min', testTitle:'Ujian ProSchedule', testBody:'Notifikasi berfungsi ✅'
  },
  en:{
@@ -249,6 +276,10 @@ const I = {
   cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play when the app is open or the notification is tapped. For full sound even when the app is closed, put the MP3 in the custom-sounds folder on GitHub.', mp3Big:'File too large (max 10MB).', appOnly:'(in-app)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
   ringStop:'Stop',
+  accAdd:'Sign in / add Google account', accList:'Choose from account list', accHint:'The Android Google account screen opens: pick an account from the list or tap Add account to sign in manually. When done, come back to ProSchedule and turn ON below.',
+  allDay:'All day', impSync:'Import schedules from Google Calendar', impPick:'Calendars to import', impNow:'Sync from Google now', impDone:'Done: {n} schedules imported.',
+  evSnd:'Schedule notification sound (meeting, deadline)',
+  calHead:'Google Calendar (phone calendar)', calSync:'Sync schedule to calendar', calPick:'Choose calendar', calAll:'Sync all schedules now', calNone:'No calendar found. Sign in to a Google account on the phone (Settings → Accounts).', calDenied:'Calendar permission not granted. Please allow it in phone Settings.', calNA:'Only works in the APK.', calDone:'Done: {n} schedules sent to the calendar.',
   nTomorrow:"Tomorrow's schedule", nToday:"Today's schedule", nDay:'Schedule summary', noSched:'Nothing scheduled.', nowTxt:'Now', soon:'Coming up', at:'at', before:'remind', early:'early', day1:'1 day', hr1:'1 hour', min:'min', testTitle:'ProSchedule test', testBody:'Notifications work ✅'
  }
 };
@@ -271,6 +302,7 @@ alarms = alarms.filter(a => !(a.rep==='once' && a.at && a.at < Date.now()));
 let counter = +(localStorage.getItem('ps_counter') || 1);
 let aCounter = +(localStorage.getItem('ps_acounter') || 100);
 let lang = localStorage.getItem('ps_lang') || 'ms';
+let evSound = localStorage.getItem('ps_evsound') || 'default';
 let view = new Date(); view.setDate(1);
 let selected = fmt(new Date());
 let evType = 'Meeting';
@@ -284,6 +316,9 @@ function save(){
   localStorage.setItem('ps_alarms', JSON.stringify(alarms));
   localStorage.setItem('ps_counter', counter);
   localStorage.setItem('ps_acounter', aCounter);
+  localStorage.setItem('ps_imp', JSON.stringify(imp));
+  localStorage.setItem('ps_gevents', JSON.stringify(gEvents));
+  localStorage.setItem('ps_ghide', JSON.stringify(gHide));
   resched();
 }
 
@@ -339,6 +374,133 @@ async function idbAll(){ const db = await idb(); return new Promise((res,rej) =>
 async function idbPut(o){ const db = await idb(); return new Promise((res,rej) => { const t = db.transaction('snd','readwrite'); t.objectStore('snd').put(o); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
 async function idbDel(id){ const db = await idb(); return new Promise((res,rej) => { const t = db.transaction('snd','readwrite'); t.objectStore('snd').delete(id); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
 
+/* ---------- sync ke kalendar telefon / Google Calendar ---------- */
+const CAL = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.registerPlugin) ? window.Capacitor.registerPlugin('CalendarSync') : null;
+let cal = J('ps_cal', {on:false, calId:null});
+let calMap = J('ps_calmap', {});
+const saveCal = () => { localStorage.setItem('ps_cal', JSON.stringify(cal)); localStorage.setItem('ps_calmap', JSON.stringify(calMap)); };
+async function calUpsert(e){
+  if(!CAL || !cal.on || !cal.calId) return;
+  try{
+    const start = new Date(`${e.date}T${e.time}:00`).getTime();
+    const r = await CAL.upsert({calId: cal.calId, eventId: calMap[e.id] || -1, title: e.title,
+      desc: `${tname(e)}${e.note ? '\n' + e.note : ''}\n(ProSchedule)`, start, end: start + 3600000});
+    calMap[e.id] = r.eventId; saveCal();
+  }catch(err){ console.log('cal upsert', err); }
+}
+async function calRemove(id){
+  if(!CAL || !calMap[id]) return;
+  try{ await CAL.remove({eventId: calMap[id]}); }catch(err){}
+  delete calMap[id]; saveCal();
+}
+async function calSyncAll(){ for(const e of events) await calUpsert(e); }
+async function calClearAll(){ for(const id of Object.keys(calMap)) await calRemove(id); }
+async function calLoadList(){
+  const r = await CAL.listCalendars(); const arr = r.calendars || [];
+  $('calSel').innerHTML = arr.map(c => `<option value="${c.id}">${esc(c.name)} — ${esc(c.account)}</option>`).join('');
+  if(!arr.length){ $('calMsg').textContent = T('calNone'); return false; }
+  if(!arr.some(c => String(c.id) === String(cal.calId))) cal.calId = arr[0].id;
+  $('calSel').value = cal.calId;
+  return true;
+}
+function renderCalSet(){
+  $('calOn').textContent = cal.on ? 'ON' : 'OFF';
+  $('calOn').classList.toggle('on', cal.on);
+  $('calFlds').classList.toggle('hide', !cal.on);
+}
+$('calOn').onclick = async () => {
+  if(!CAL){ $('calMsg').textContent = T('calNA'); return; }
+  if(cal.on){ cal.on = false; saveCal(); renderCalSet(); $('calMsg').textContent = ''; return; }
+  try{
+    const g = await CAL.requestAccess();
+    if(!g.granted){ $('calMsg').textContent = T('calDenied'); return; }
+    if(!(await calLoadList())) return;
+    cal.on = true; saveCal(); renderCalSet(); $('calMsg').textContent = '';
+    await calSyncAll();
+  }catch(e){ $('calMsg').textContent = String(e); }
+};
+$('calSel').onchange = async () => { await calClearAll(); cal.calId = +$('calSel').value; saveCal(); await calSyncAll(); };
+$('calAll').onclick = async () => { await calSyncAll(); $('calMsg').textContent = T('calDone').replace('{n}', events.length); };
+
+/* ---------- import dari Google Calendar (melalui kalendar telefon) ---------- */
+let imp = J('ps_imp', {on:false, ids:[]});
+let gEvents = J('ps_gevents', []);
+let gHide = J('ps_ghide', []);
+let impCals = [];
+const allEvents = () => events.concat(gEvents.filter(g => !gHide.includes(g.id)));
+const tcol = e => e.src === 'g' ? '#4285F4' : TYPES[e.type];
+const tname = e => e.src === 'g' ? 'Google' : T('types')[e.type];
+const tlabel = e => e.allDay ? T('allDay') : e.time;
+function delEvent(idv){
+  if(String(idv).startsWith('g')){ if(!gHide.includes(idv)) gHide.push(idv); }
+  else { const n = +idv; events = events.filter(e => e.id !== n); calRemove(n); }
+  save(); renderCal(); renderDay(); renderDayPopup();
+}
+async function impLoadCals(){
+  const r = await CAL.listCalendars({all:true}); impCals = r.calendars || [];
+  if(!imp.ids.length){
+    const pri = impCals.filter(c => c.name === c.account);
+    imp.ids = (pri.length ? pri : impCals.slice(0,1)).map(c => c.id);
+  }
+  renderImp();
+  return impCals.length > 0;
+}
+function renderImp(){
+  $('impOn').textContent = imp.on ? 'ON' : 'OFF';
+  $('impOn').classList.toggle('on', imp.on);
+  $('impFlds').classList.toggle('hide', !imp.on);
+  $('impList').innerHTML = impCals.map(c => { const on = imp.ids.includes(c.id); return `<span data-c="${c.id}" class="${on?'on':''}" style="${on?'background:#4285F4':''}">${esc(c.name)}</span>`; }).join('');
+  document.querySelectorAll('#impList span').forEach(s => s.onclick = () => {
+    const id = +s.dataset.c;
+    imp.ids = imp.ids.includes(id) ? imp.ids.filter(x => x !== id) : imp.ids.concat(id);
+    save(); renderImp(); importSync(true);
+  });
+}
+async function importSync(manual){
+  if(!CAL || !imp.on || !imp.ids.length) return;
+  try{
+    const s = new Date(); s.setDate(s.getDate()-30); s.setHours(0,0,0,0);
+    const e2 = new Date(); e2.setMonth(e2.getMonth()+6);
+    const r = await CAL.listEvents({calIds: imp.ids, start: s.getTime(), end: e2.getTime()});
+    const mine = new Set(Object.values(calMap).map(String));
+    const out = [];
+    (r.events || []).forEach(x => {
+      if(mine.has(String(x.eventId)) || String(x.desc || '').indexOf('(ProSchedule)') >= 0) return;
+      const title = x.title || '(-)';
+      if(x.allDay){
+        for(let t = x.begin, k = 0; t < x.end && k < 14; t += 86400000, k++){
+          const ds = new Date(t).toISOString().slice(0,10);
+          out.push({id:`g${x.eventId}_${ds}`, src:'g', date:ds, time:'00:00', allDay:true, title, rem:0});
+        }
+      } else {
+        const d = new Date(x.begin);
+        out.push({id:`g${x.eventId}_${x.begin}`, src:'g', date:fmt(d), time:`${pad(d.getHours())}:${pad(d.getMinutes())}`, allDay:false, title, rem:10});
+      }
+    });
+    const next = out.slice(0, 800);
+    if(JSON.stringify(next) !== JSON.stringify(gEvents)){
+      gEvents = next; save(); renderCal(); renderDay(); renderDayPopup();
+    }
+    if(manual) $('impMsg').textContent = T('impDone').replace('{n}', next.length);
+  }catch(err){ console.log('import', err); if(manual) $('impMsg').textContent = String(err); }
+}
+let impTimer = null;
+const impSoon = () => { clearTimeout(impTimer); impTimer = setTimeout(() => importSync(), 3000); };
+$('impOn').onclick = async () => {
+  if(!CAL){ $('impMsg').textContent = T('calNA'); return; }
+  if(imp.on){ imp.on = false; gEvents = []; save(); renderImp(); renderCal(); renderDay(); $('impMsg').textContent = ''; return; }
+  try{
+    const g = await CAL.requestAccess();
+    if(!g.granted){ $('impMsg').textContent = T('calDenied'); return; }
+    if(!(await impLoadCals())){ $('impMsg').textContent = T('calNone'); return; }
+    imp.on = true; save(); renderImp(); $('impMsg').textContent = '';
+    await importSync(true);
+  }catch(e){ $('impMsg').textContent = String(e); }
+};
+$('accAdd').onclick = () => { if(!CAL){ $('calMsg').textContent = T('calNA'); return; } CAL.openAccounts({add:true}).catch(e => { $('calMsg').textContent = String(e); }); };
+$('accList').onclick = () => { if(!CAL){ $('calMsg').textContent = T('calNA'); return; } CAL.openAccounts({add:false}).catch(e => { $('calMsg').textContent = String(e); }); };
+$('impNow').onclick = async () => { try{ await CAL.refresh(); }catch(e){} await importSync(true); };
+
 /* ---------- calendar & day page ---------- */
 function dateTitle(ds){
   const [y,m,d] = ds.split('-').map(Number);
@@ -355,7 +517,7 @@ function renderCal(){
   for(let i=0;i<first;i++) h += '<div></div>';
   for(let d=1; d<=days; d++){
     const ds = `${view.getFullYear()}-${pad(view.getMonth()+1)}-${pad(d)}`;
-    const has = events.some(e => e.date === ds);
+    const has = allEvents().some(e => e.date === ds);
     h += `<div class="day ${ds===today?'today':''} ${ds===selected?'sel':''}" data-d="${ds}">${d}${has?'<i class="dot"></i>':''}</div>`;
   }
   $('cal').innerHTML = h;
@@ -366,9 +528,9 @@ function renderDay(){
   $('dayTitle').textContent = dateTitle(selected);
   let h = '';
   for(let hr=0; hr<24; hr++){
-    const evs = events.filter(e => e.date===selected && +e.time.slice(0,2)===hr).sort((a,b)=>a.time.localeCompare(b.time));
+    const evs = allEvents().filter(e => e.date===selected && +e.time.slice(0,2)===hr).sort((a,b)=>a.time.localeCompare(b.time));
     h += `<div class="hour" data-h="${hr}"><div class="t">${pad(hr)}:00</div><div class="c">` +
-      evs.map(e => `<div class="ev" style="border-left-color:${TYPES[e.type]}"><div><b>${esc(e.time)} ${esc(e.title)}</b><small>${esc(T('types')[e.type])}${e.rem>0?' • '+T('before')+' '+remLabel(e.rem)+' '+T('early'):''}${e.note?' • '+esc(e.note):''}</small></div><button class="x" data-del="${e.id}">×</button></div>`).join('') +
+      evs.map(e => `<div class="ev" style="border-left-color:${tcol(e)}"><div><b>${esc(tlabel(e))} ${esc(e.title)}</b><small>${esc(tname(e))}${e.rem>0?' • '+T('before')+' '+remLabel(e.rem)+' '+T('early'):''}${e.note?' • '+esc(e.note):''}</small></div><button class="x" data-del="${e.id}">×</button></div>`).join('') +
       (evs.length ? '' : `<div class="add">${T('add')}</div>`) + `</div></div>`;
   }
   $('hours').innerHTML = h;
@@ -378,7 +540,7 @@ function renderDay(){
   });
   document.querySelectorAll('[data-del]').forEach(b => b.onclick = ev => {
     ev.stopPropagation();
-    if(confirm(T('confirmDel'))){ events = events.filter(e => e.id !== +b.dataset.del); save(); renderCal(); renderDay(); }
+    if(confirm(T('confirmDel'))) delEvent(b.dataset.del);
   });
 }
 
@@ -396,9 +558,9 @@ function openEv(hr){
 function dayAlarm(){ return dayAlarms[selected] || {on:false, t:'22:00', sound:'default'}; }
 function renderDayPopup(){
   $('dpTitle').textContent = dateTitle(selected);
-  const evs = events.filter(e => e.date === selected).sort((a,b) => a.time.localeCompare(b.time));
+  const evs = allEvents().filter(e => e.date === selected).sort((a,b) => a.time.localeCompare(b.time));
   $('dpList').innerHTML = evs.length
-    ? evs.map(e => `<div class="ev" style="border-left-color:${TYPES[e.type]}"><div><b>${esc(e.time)} ${esc(e.title)}</b><small>${esc(T('types')[e.type])}${e.note?' • '+esc(e.note):''}</small></div></div>`).join('')
+    ? evs.map(e => `<div class="ev" style="border-left-color:${tcol(e)}"><div><b>${esc(tlabel(e))} ${esc(e.title)}</b><small>${esc(tname(e))}${e.note?' • '+esc(e.note):''}</small></div></div>`).join('')
     : `<div class="empty">${T('dpEmpty')}</div>`;
   const a = dayAlarm();
   $('dpOn').textContent = a.on ? 'ON' : 'OFF';
@@ -423,9 +585,14 @@ $('dpEdit').onclick = () => { stopAudio(); $('mDay').classList.remove('on'); ren
 function renderAlarms(){
   const list = alarms.slice().sort((a,b) => a.t.localeCompare(b.t));
   $('alList').innerHTML = list.length ? list.map(a =>
-    `<div class="alrow"><div><b>${esc(a.t)}</b><span class="pill">${a.rep==='daily'?T('daily'):T('once')}</span><small>${esc(soundName(a.sound))} • ${+a.t.slice(0,2)>=12?T('lblEsok'):T('lblIni')}</small></div>
+    `<div class="alrow"><div><b>${esc(a.t)}</b><span class="pill">${a.rep==='daily'?T('daily'):T('once')}</span><small>${+a.t.slice(0,2)>=12?T('lblEsok'):T('lblIni')}</small><select class="rowsel" data-sd="${a.id}"></select></div>
      <div class="acts"><button class="tog ${a.on?'on':''}" data-tg="${a.id}">${a.on?'ON':'OFF'}</button><button class="ghost sm" data-rm="${a.id}">×</button></div></div>`).join('')
     : `<div class="empty">${T('noAlarm')}</div>`;
+  document.querySelectorAll('[data-sd]').forEach(s => {
+    const a0 = alarms.find(x => x.id === +s.dataset.sd);
+    fillSound(s, a0 ? a0.sound : 'default');
+    s.onchange = () => { const a1 = alarms.find(x => x.id === +s.dataset.sd); if(a1){ a1.sound = s.value; save(); } };
+  });
   document.querySelectorAll('[data-tg]').forEach(b => b.onclick = () => { const a = alarms.find(x => x.id === +b.dataset.tg); a.on = !a.on; save(); renderAlarms(); });
   document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { alarms = alarms.filter(x => x.id !== +b.dataset.rm); save(); renderAlarms(); });
 }
@@ -462,9 +629,9 @@ function renderCfg(){
 }
 function refreshSoundUI(){
   renderCfg(); renderAlarms();
-  fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value);
+  fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { refreshSoundUI(); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { refreshSoundUI(); renderCalSet(); renderImp(); if(CAL && cal.on) calLoadList().catch(() => {}); if(CAL && imp.on) impLoadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
@@ -477,6 +644,8 @@ $('mp3In').onchange = async () => {
 };
 
 const TEST_ID = 9999999;
+$('evSndSel').onchange = () => { evSound = $('evSndSel').value; localStorage.setItem('ps_evsound', evSound); resched(); };
+$('evSndPlay').onclick = () => playSound($('evSndSel').value);
 $('tsPlay').onclick = () => playSound($('tsSound').value);
 $('testBtn').onclick = async () => {
   if(!LN){ alert(T('testNA')); return; }
@@ -495,8 +664,9 @@ $('evCancel').onclick = () => $('mEv').classList.remove('on');
 $('evSave').onclick = () => {
   const title = $('evTitle').value.trim();
   if(!title){ alert(T('needTitle')); return; }
-  events.push({id:counter++, date:selected, time:$('evTime').value || '09:00', title, type:evType, rem:+$('evRem').value, note:$('evNote').value.trim()});
-  save(); $('mEv').classList.remove('on'); renderCal(); renderDay();
+  const ne = {id:counter++, date:selected, time:$('evTime').value || '09:00', title, type:evType, rem:+$('evRem').value, note:$('evNote').value.trim()};
+  events.push(ne);
+  save(); calUpsert(ne); $('mEv').classList.remove('on'); renderCal(); renderDay();
 };
 $('prev').onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
 $('next').onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
@@ -547,10 +717,10 @@ async function ensureChannels(){
   }
 }
 function sumFor(ds){
-  const evs = events.filter(e => e.date===ds).sort((a,b)=>a.time.localeCompare(b.time));
+  const evs = allEvents().filter(e => e.date===ds).sort((a,b)=>a.time.localeCompare(b.time));
   return {
-    body: evs.length ? evs.map(e => `${e.time} ${e.title}`).join(' | ') : T('noSched'),
-    large: evs.length ? evs.map(e => `${e.time}  ${e.title} (${T('types')[e.type]})`).join('\n') : T('noSched')
+    body: evs.length ? evs.map(e => `${tlabel(e)} ${e.title}`).join(' | ') : T('noSched'),
+    large: evs.length ? evs.map(e => `${tlabel(e)}  ${e.title} (${tname(e)})`).join('\n') : T('noSched')
   };
 }
 
@@ -567,12 +737,20 @@ async function resched(){
 
     events.forEach(e => {
       const d = new Date(`${e.date}T${e.time}:00`);
-      const tn = T('types')[e.type];
-      if(d > now) list.push(mk({id:e.id*2, title:`${tn}: ${e.title}`, body:`${T('nowTxt')} • ${e.time}`, schedule:{at:d, allowWhileIdle:true}}, 'default'));
+      const tn = tname(e);
+      if(d > now) list.push(mk({id:e.id*2, title:`${tn}: ${e.title}`, body:`${T('nowTxt')} • ${e.time}`, schedule:{at:d, allowWhileIdle:true}}, evSound));
       if(e.rem > 0){
         const r = new Date(d.getTime() - e.rem*60000);
-        if(r > now) list.push(mk({id:e.id*2+1, title:`${T('soon')}: ${e.title}`, body:`${tn} ${T('at')} ${e.time}`, schedule:{at:r, allowWhileIdle:true}}, 'default'));
+        if(r > now) list.push(mk({id:e.id*2+1, title:`${T('soon')}: ${e.title}`, body:`${tn} ${T('at')} ${e.time}`, schedule:{at:r, allowWhileIdle:true}}, evSound));
       }
+    });
+
+    const nowMs = now.getTime(), lim = nowMs + 30*86400000;
+    allEvents().filter(e => e.src === 'g' && !e.allDay).slice(0, 100).forEach((e, gi) => {
+      const d = new Date(`${e.date}T${e.time}:00`);
+      if(d.getTime() > nowMs && d.getTime() < lim) list.push(mk({id:4000000+gi*2, title:`Google: ${e.title}`, body:`${T('nowTxt')} • ${e.time}`, schedule:{at:d, allowWhileIdle:true}}, evSound));
+      const r = new Date(d.getTime() - 600000);
+      if(r.getTime() > nowMs && d.getTime() < lim) list.push(mk({id:4000001+gi*2, title:`${T('soon')}: ${e.title}`, body:`Google ${T('at')} ${e.time}`, schedule:{at:r, allowWhileIdle:true}}, evSound));
     });
 
     alarms.forEach((a,i) => {
@@ -616,12 +794,15 @@ function applyLang(){
   $('alRep').value = rp;
   $('dpTime').innerHTML = DAYTIMES.map(t => `<option value="${t}">${t}</option>`).join('');
   renderCal(); renderDay(); renderTypes(); renderAlarms(); renderCfg(); renderDayPopup();
-  fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value);
+  fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
 async function init(){
   try{ userSounds = await idbAll(); }catch(e){}
   try{ const r = await fetch('sounds.json'); const a = await r.json(); repoSounds = a.map(n => ({id:'c_'+n, n})); }catch(e){}
   applyLang(); save();
+  if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); }
+  if(CAL && CAL.addListener){ try{ CAL.addListener('calendarChanged', impSoon); }catch(e){} }
+  if(APP && APP.addListener){ APP.addListener('resume', () => { if(CAL && $('mCfg').classList.contains('on')){ impLoadCals().catch(() => {}); if(cal.on) calLoadList().catch(() => {}); } if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); impSoon(); } }); }
 }
 init();
 </script>
