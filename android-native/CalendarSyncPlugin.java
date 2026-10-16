@@ -1,6 +1,8 @@
 package com.proschedule.app;
 
 import android.Manifest;
+import android.accounts.AccountManager;
+import android.app.Activity;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -20,9 +22,13 @@ import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
+import androidx.activity.result.ActivityResult;
+import com.google.android.gms.common.AccountPicker;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TimeZone;
 import org.json.JSONArray;
@@ -84,27 +90,64 @@ public class CalendarSyncPlugin extends Plugin {
     }
     try {
       boolean all = Boolean.TRUE.equals(call.getBoolean("all", false));
+      String account = call.getString("account", "");
       JSArray arr = new JSArray();
       String[] proj = {
         CalendarContract.Calendars._ID,
         CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-        CalendarContract.Calendars.ACCOUNT_NAME
+        CalendarContract.Calendars.ACCOUNT_NAME,
+        CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL
       };
       String sel = all
           ? CalendarContract.Calendars.VISIBLE + " = 1"
           : CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL + " >= " + CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR;
-      Cursor c = getContext().getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, proj, sel, null, null);
+      String[] args = null;
+      if (account != null && !account.isEmpty()) {
+        sel = "(" + sel + ") AND " + CalendarContract.Calendars.ACCOUNT_NAME + " = ?";
+        args = new String[] { account };
+      }
+      Cursor c = getContext().getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, proj, sel, args, null);
       while (c != null && c.moveToNext()) {
         JSObject o = new JSObject();
         o.put("id", c.getLong(0));
         o.put("name", c.getString(1));
         o.put("account", c.getString(2));
+        o.put("canWrite", c.getInt(3) >= CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR);
         arr.put(o);
       }
       if (c != null) c.close();
       call.resolve(new JSObject().put("calendars", arr));
     } catch (Exception e) {
       call.reject(String.valueOf(e.getMessage()));
+    }
+  }
+
+  // Kotak pilih akaun Google (senarai akaun dalam telefon + "Tambah akaun lain")
+  @PluginMethod
+  public void pickAccount(PluginCall call) {
+    try {
+      Intent i = AccountPicker.newChooseAccountIntent(
+          new AccountPicker.AccountChooserOptions.Builder()
+              .setAllowableAccountsTypes(Arrays.asList("com.google"))
+              .setAlwaysShowAccountPicker(true)
+              .build());
+      startActivityForResult(call, i, "pickResult");
+    } catch (Exception e) {
+      call.reject(String.valueOf(e.getMessage()));
+    }
+  }
+
+  @ActivityCallback
+  private void pickResult(PluginCall call, ActivityResult result) {
+    if (call == null) return;
+    Intent data = result.getData();
+    if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+      JSObject o = new JSObject();
+      o.put("name", data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+      o.put("type", data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+      call.resolve(o);
+    } else {
+      call.resolve(new JSObject().put("cancelled", true));
     }
   }
 
@@ -129,6 +172,7 @@ public class CalendarSyncPlugin extends Plugin {
       v.put(CalendarContract.Events.DTSTART, start);
       v.put(CalendarContract.Events.DTEND, end);
       v.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
+      v.put(CalendarContract.Events.HAS_ALARM, 0); // alarm hanya dalam ProSchedule (APK)
 
       long id = eventId;
       if (eventId > 0) {

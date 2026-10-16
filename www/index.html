@@ -102,6 +102,7 @@ body.sub .logo{display:none}
 .toprow{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .toprow b{font-family:var(--display);font-size:17px}
 .rowsel{font-size:14px;padding:6px 8px;margin-top:6px;border-radius:10px;max-width:210px}
+.gacc{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:16px;padding:10px 12px;border:2px dashed var(--ink);border-radius:14px;background:var(--paper);overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -184,22 +185,17 @@ body.sub .logo{display:none}
   <div class="sndrow"><select id="evSndSel"></select><button class="icon" id="evSndPlay">▶</button></div>
   <div class="sep"></div>
   <h2 data-i="calHead"></h2>
-  <div class="row"><button id="accAdd" data-i="accAdd"></button></div>
-  <div class="row"><button class="ghost" id="accList" data-i="accList"></button></div>
-  <p class="hint" data-i="accHint"></p>
-  <p class="hint" id="accMsg" style="white-space:pre-line;color:var(--bm);font-weight:600"></p>
-  <div class="toprow"><b data-i="calSync"></b><button class="tog" id="calOn">OFF</button></div>
-  <div id="calFlds" class="hide">
+  <label data-i="gAcc"></label>
+  <div class="sndrow"><div id="gAccName" class="gacc"></div><button class="icon" id="gPick" data-i="gPick"></button></div>
+  <div id="gFlds" class="hide">
     <label data-i="calPick"></label><select id="calSel"></select>
-    <div class="row"><button id="calAll" data-i="calAll"></button></div>
-  </div>
-  <p class="hint" id="calMsg"></p>
-  <div class="toprow" style="margin-top:14px"><b data-i="impSync"></b><button class="tog" id="impOn">OFF</button></div>
-  <div id="impFlds" class="hide">
     <label data-i="impPick"></label><div class="types" id="impList"></div>
-    <div class="row"><button id="impNow" data-i="impNow"></button></div>
+    <div class="toprow" style="margin-top:14px"><b data-i="autoSync"></b><button class="tog" id="autoOn">OFF</button></div>
   </div>
-  <p class="hint" id="impMsg"></p>
+  <div class="row"><button id="gSync" data-i="gSync"></button></div>
+  <p class="hint" id="gMsg" style="white-space:pre-line;color:var(--ink);font-weight:600"></p>
+  <p class="hint" id="gLast"></p>
+  <p class="hint" data-i="gHint"></p>
   <div class="sep"></div>
   <h2 data-i="testHead"></h2>
   <label data-i="testSec"></label><input type="number" id="testSec" value="10" min="1" max="3600">
@@ -207,7 +203,7 @@ body.sub .logo{display:none}
   <div class="sndrow"><select id="tsSound"></select><button class="icon" id="tsPlay">▶</button></div>
   <div class="row"><button id="testBtn" data-i="testBtn"></button></div>
   <div class="row"><button class="ghost" id="cfgClose" data-i="close"></button></div>
-  <p class="hint" style="text-align:center">ProSchedule v8 · alarm volume + sounds + kalendar + import Google</p>
+  <p class="hint" style="text-align:center">ProSchedule v9 · alarm volume + sounds + kalendar + import Google</p>
 </div></div>
 
 <div class="modal mid" id="mExit"><div class="sheet">
@@ -255,11 +251,12 @@ const I = {
   cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini berbunyi apabila app dibuka atau notifikasi ditekan. Untuk bunyi penuh walaupun app ditutup, letak MP3 dalam folder custom-sounds di GitHub.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(dalam app)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
   ringStop:'Matikan',
+  gAcc:'Akaun Google', gNone:'(belum dipilih)', gPick:'Pilih akaun', gSync:'Sync Google Calendar', gSyncing:'Sedang sync...', gDone:'Selesai: {n} jadual Google diimport dan jadual ProSchedule dihantar.', gPicked:'Akaun dipilih. Tekan Sync Google Calendar.', autoSync:'Auto sync setiap 1 jam', gLast:'Sync terakhir:', gHint:'Alarm dan bunyi hanya dalam ProSchedule (APK). Jadual yang dihantar ke Google Calendar tiada alarm. Auto sync berjalan bila app dibuka.',
   accNA:'Butang ini hanya berfungsi dalam APK ProSchedule (bukan dalam browser).', accOpening:'Membuka skrin akaun...', accOpened:'Skrin akaun dibuka. Selepas siap, kembali ke ProSchedule.', accOld:'APK ini belum ada fungsi akaun. Kemas kini fail android-native/CalendarSyncPlugin.java dalam repo, build semula, uninstall APK lama dan install.', accManual:'Cara manual: Tetapan telefon → Akaun (atau Pengguna & akaun) → Tambah akaun → Google.',
   accAdd:'Login / tambah akaun Google', accList:'Pilih dari senarai akaun', accHint:'Skrin akaun Google Android akan dibuka: pilih akaun dalam senarai atau tekan Tambah akaun untuk masuk manual. Selepas siap, kembali ke ProSchedule dan tekan ON di bawah.',
   allDay:'Seharian', impSync:'Import jadual dari Google Calendar', impPick:'Kalendar yang diimport', impNow:'Sync dari Google sekarang', impDone:'Selesai: {n} jadual diimport.',
   evSnd:'Bunyi notifikasi jadual (meeting, deadline)',
-  calHead:'Google Calendar (kalendar telefon)', calSync:'Sync jadual ke kalendar', calPick:'Pilih kalendar', calAll:'Sync semua jadual sekarang', calNone:'Tiada kalendar ditemui. Login akaun Google dalam telefon (Tetapan → Akaun).', calDenied:'Kebenaran Kalendar tidak diberi. Sila benarkan di Tetapan telefon.', calNA:'Hanya berfungsi dalam APK.', calDone:'Selesai: {n} jadual dihantar ke kalendar.',
+  calHead:'Google Calendar (kalendar telefon)', calSync:'Sync jadual ke kalendar', calPick:'Hantar jadual ProSchedule ke kalendar', calAll:'Sync semua jadual sekarang', calNone:'Tiada kalendar ditemui. Login akaun Google dalam telefon (Tetapan → Akaun).', calDenied:'Kebenaran Kalendar tidak diberi. Sila benarkan di Tetapan telefon.', calNA:'Hanya berfungsi dalam APK.', calDone:'Selesai: {n} jadual dihantar ke kalendar.',
   nTomorrow:'Jadual esok', nToday:'Jadual hari ini', nDay:'Ringkasan jadual', noSched:'Tiada jadual.', nowTxt:'Sekarang', soon:'Akan datang', at:'pada', before:'ingatkan', early:'awal', day1:'1 hari', hr1:'1 jam', min:'min', testTitle:'Ujian ProSchedule', testBody:'Notifikasi berfungsi ✅'
  },
  en:{
@@ -278,11 +275,12 @@ const I = {
   cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play when the app is open or the notification is tapped. For full sound even when the app is closed, put the MP3 in the custom-sounds folder on GitHub.', mp3Big:'File too large (max 10MB).', appOnly:'(in-app)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
   ringStop:'Stop',
+  gAcc:'Google account', gNone:'(not selected)', gPick:'Choose account', gSync:'Sync Google Calendar', gSyncing:'Syncing...', gDone:'Done: {n} Google schedules imported and ProSchedule schedules sent.', gPicked:'Account selected. Tap Sync Google Calendar.', autoSync:'Auto sync every 1 hour', gLast:'Last sync:', gHint:'Alarms and sounds are only in ProSchedule (APK). Schedules sent to Google Calendar have no alarm. Auto sync runs while the app is open.',
   accNA:'This button only works in the ProSchedule APK (not in a browser).', accOpening:'Opening account screen...', accOpened:'Account screen opened. When done, come back to ProSchedule.', accOld:'This APK does not have the account feature yet. Update android-native/CalendarSyncPlugin.java in the repo, rebuild, uninstall the old APK and install.', accManual:'Manual way: phone Settings → Accounts (or Users & accounts) → Add account → Google.',
   accAdd:'Sign in / add Google account', accList:'Choose from account list', accHint:'The Android Google account screen opens: pick an account from the list or tap Add account to sign in manually. When done, come back to ProSchedule and turn ON below.',
   allDay:'All day', impSync:'Import schedules from Google Calendar', impPick:'Calendars to import', impNow:'Sync from Google now', impDone:'Done: {n} schedules imported.',
   evSnd:'Schedule notification sound (meeting, deadline)',
-  calHead:'Google Calendar (phone calendar)', calSync:'Sync schedule to calendar', calPick:'Choose calendar', calAll:'Sync all schedules now', calNone:'No calendar found. Sign in to a Google account on the phone (Settings → Accounts).', calDenied:'Calendar permission not granted. Please allow it in phone Settings.', calNA:'Only works in the APK.', calDone:'Done: {n} schedules sent to the calendar.',
+  calHead:'Google Calendar (phone calendar)', calSync:'Sync schedule to calendar', calPick:'Send ProSchedule schedules to calendar', calAll:'Sync all schedules now', calNone:'No calendar found. Sign in to a Google account on the phone (Settings → Accounts).', calDenied:'Calendar permission not granted. Please allow it in phone Settings.', calNA:'Only works in the APK.', calDone:'Done: {n} schedules sent to the calendar.',
   nTomorrow:"Tomorrow's schedule", nToday:"Today's schedule", nDay:'Schedule summary', noSched:'Nothing scheduled.', nowTxt:'Now', soon:'Coming up', at:'at', before:'remind', early:'early', day1:'1 day', hr1:'1 hour', min:'min', testTitle:'ProSchedule test', testBody:'Notifications work ✅'
  }
 };
@@ -377,11 +375,30 @@ async function idbAll(){ const db = await idb(); return new Promise((res,rej) =>
 async function idbPut(o){ const db = await idb(); return new Promise((res,rej) => { const t = db.transaction('snd','readwrite'); t.objectStore('snd').put(o); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
 async function idbDel(id){ const db = await idb(); return new Promise((res,rej) => { const t = db.transaction('snd','readwrite'); t.objectStore('snd').delete(id); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
 
-/* ---------- sync ke kalendar telefon / Google Calendar ---------- */
+/* ---------- Google Calendar (melalui akaun Google dalam telefon) ---------- */
 const CAL = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.registerPlugin) ? window.Capacitor.registerPlugin('CalendarSync') : null;
 let cal = J('ps_cal', {on:false, calId:null});
 let calMap = J('ps_calmap', {});
-const saveCal = () => { localStorage.setItem('ps_cal', JSON.stringify(cal)); localStorage.setItem('ps_calmap', JSON.stringify(calMap)); };
+let imp = J('ps_imp', {on:false, ids:[]});
+let gEvents = J('ps_gevents', []);
+let gHide = J('ps_ghide', []);
+let gacc = J('ps_gacc', null);
+let autoSync = J('ps_auto', false);
+let lastSync = +(localStorage.getItem('ps_lastsync') || 0);
+let impCals = [];
+const saveCal = () => {
+  localStorage.setItem('ps_cal', JSON.stringify(cal));
+  localStorage.setItem('ps_calmap', JSON.stringify(calMap));
+  localStorage.setItem('ps_gacc', JSON.stringify(gacc));
+  localStorage.setItem('ps_auto', JSON.stringify(autoSync));
+};
+const gmsg = t => { $('gMsg').textContent = t; };
+const allEvents = () => events.concat(gEvents.filter(g => !gHide.includes(g.id)));
+const tcol = e => e.src === 'g' ? '#4285F4' : TYPES[e.type];
+const tname = e => e.src === 'g' ? 'Google' : T('types')[e.type];
+const tlabel = e => e.allDay ? T('allDay') : e.time;
+
+/* hantar jadual ProSchedule -> Google Calendar (tanpa alarm) */
 async function calUpsert(e){
   if(!CAL || !cal.on || !cal.calId) return;
   try{
@@ -396,70 +413,16 @@ async function calRemove(id){
   try{ await CAL.remove({eventId: calMap[id]}); }catch(err){}
   delete calMap[id]; saveCal();
 }
-async function calSyncAll(){ for(const e of events) await calUpsert(e); }
+async function calSyncAll(){ for(const e of events) if(!calMap[e.id]) await calUpsert(e); }
 async function calClearAll(){ for(const id of Object.keys(calMap)) await calRemove(id); }
-async function calLoadList(){
-  const r = await CAL.listCalendars(); const arr = r.calendars || [];
-  $('calSel').innerHTML = arr.map(c => `<option value="${c.id}">${esc(c.name)} — ${esc(c.account)}</option>`).join('');
-  if(!arr.length){ $('calMsg').textContent = T('calNone'); return false; }
-  if(!arr.some(c => String(c.id) === String(cal.calId))) cal.calId = arr[0].id;
-  $('calSel').value = cal.calId;
-  return true;
-}
-function renderCalSet(){
-  $('calOn').textContent = cal.on ? 'ON' : 'OFF';
-  $('calOn').classList.toggle('on', cal.on);
-  $('calFlds').classList.toggle('hide', !cal.on);
-}
-$('calOn').onclick = async () => {
-  if(!CAL){ $('calMsg').textContent = T('calNA'); return; }
-  if(cal.on){ cal.on = false; saveCal(); renderCalSet(); $('calMsg').textContent = ''; return; }
-  try{
-    const g = await CAL.requestAccess();
-    if(!g.granted){ $('calMsg').textContent = T('calDenied'); return; }
-    if(!(await calLoadList())) return;
-    cal.on = true; saveCal(); renderCalSet(); $('calMsg').textContent = '';
-    await calSyncAll();
-  }catch(e){ $('calMsg').textContent = String(e); }
-};
-$('calSel').onchange = async () => { await calClearAll(); cal.calId = +$('calSel').value; saveCal(); await calSyncAll(); };
-$('calAll').onclick = async () => { await calSyncAll(); $('calMsg').textContent = T('calDone').replace('{n}', events.length); };
-
-/* ---------- import dari Google Calendar (melalui kalendar telefon) ---------- */
-let imp = J('ps_imp', {on:false, ids:[]});
-let gEvents = J('ps_gevents', []);
-let gHide = J('ps_ghide', []);
-let impCals = [];
-const allEvents = () => events.concat(gEvents.filter(g => !gHide.includes(g.id)));
-const tcol = e => e.src === 'g' ? '#4285F4' : TYPES[e.type];
-const tname = e => e.src === 'g' ? 'Google' : T('types')[e.type];
-const tlabel = e => e.allDay ? T('allDay') : e.time;
 function delEvent(idv){
   if(String(idv).startsWith('g')){ if(!gHide.includes(idv)) gHide.push(idv); }
   else { const n = +idv; events = events.filter(e => e.id !== n); calRemove(n); }
   save(); renderCal(); renderDay(); renderDayPopup();
 }
-async function impLoadCals(){
-  const r = await CAL.listCalendars({all:true}); impCals = r.calendars || [];
-  if(!imp.ids.length){
-    const pri = impCals.filter(c => c.name === c.account);
-    imp.ids = (pri.length ? pri : impCals.slice(0,1)).map(c => c.id);
-  }
-  renderImp();
-  return impCals.length > 0;
-}
-function renderImp(){
-  $('impOn').textContent = imp.on ? 'ON' : 'OFF';
-  $('impOn').classList.toggle('on', imp.on);
-  $('impFlds').classList.toggle('hide', !imp.on);
-  $('impList').innerHTML = impCals.map(c => { const on = imp.ids.includes(c.id); return `<span data-c="${c.id}" class="${on?'on':''}" style="${on?'background:#4285F4':''}">${esc(c.name)}</span>`; }).join('');
-  document.querySelectorAll('#impList span').forEach(s => s.onclick = () => {
-    const id = +s.dataset.c;
-    imp.ids = imp.ids.includes(id) ? imp.ids.filter(x => x !== id) : imp.ids.concat(id);
-    save(); renderImp(); importSync(true);
-  });
-}
-async function importSync(manual){
+
+/* tarik jadual Google Calendar -> ProSchedule */
+async function importSync(){
   if(!CAL || !imp.on || !imp.ids.length) return;
   try{
     const s = new Date(); s.setDate(s.getDate()-30); s.setHours(0,0,0,0);
@@ -484,34 +447,75 @@ async function importSync(manual){
     if(JSON.stringify(next) !== JSON.stringify(gEvents)){
       gEvents = next; save(); renderCal(); renderDay(); renderDayPopup();
     }
-    if(manual) $('impMsg').textContent = T('impDone').replace('{n}', next.length);
-  }catch(err){ console.log('import', err); if(manual) $('impMsg').textContent = String(err); }
+  }catch(err){ console.log('import', err); }
 }
 let impTimer = null;
 const impSoon = () => { clearTimeout(impTimer); impTimer = setTimeout(() => importSync(), 3000); };
-$('impOn').onclick = async () => {
-  if(!CAL){ $('impMsg').textContent = T('calNA'); return; }
-  if(imp.on){ imp.on = false; gEvents = []; save(); renderImp(); renderCal(); renderDay(); $('impMsg').textContent = ''; return; }
+
+/* akaun & kalendar */
+async function loadCals(){
+  const r = await CAL.listCalendars({all:true, account: gacc ? gacc.name : ''});
+  impCals = r.calendars || [];
+  if(!impCals.length) return false;
+  const writable = impCals.filter(c => c.canWrite);
+  const pri = writable.find(c => c.name === c.account) || writable[0] || impCals[0];
+  if(!impCals.some(c => c.id === cal.calId)) cal.calId = pri.id;
+  imp.ids = imp.ids.filter(id => impCals.some(c => c.id === id));
+  if(!imp.ids.length) imp.ids = [pri.id];
+  saveCal(); renderG();
+  return true;
+}
+function renderG(){
+  $('gAccName').textContent = gacc ? gacc.name : T('gNone');
+  $('gFlds').classList.toggle('hide', !gacc);
+  $('autoOn').textContent = autoSync ? 'ON' : 'OFF';
+  $('autoOn').classList.toggle('on', autoSync);
+  $('calSel').innerHTML = impCals.filter(c => c.canWrite).map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  if(cal.calId) $('calSel').value = cal.calId;
+  $('impList').innerHTML = impCals.map(c => { const on = imp.ids.includes(c.id); return `<span data-c="${c.id}" class="${on?'on':''}" style="${on?'background:#4285F4':''}">${esc(c.name)}</span>`; }).join('');
+  document.querySelectorAll('#impList span').forEach(s => s.onclick = () => {
+    const id = +s.dataset.c;
+    imp.ids = imp.ids.includes(id) ? imp.ids.filter(x => x !== id) : imp.ids.concat(id);
+    save(); renderG(); importSync();
+  });
+  $('gLast').textContent = lastSync ? `${T('gLast')} ${new Date(lastSync).toLocaleString()}` : '';
+}
+$('gPick').onclick = async () => {
+  if(!CAL){ gmsg(T('calNA')); return; }
   try{
     const g = await CAL.requestAccess();
-    if(!g.granted){ $('impMsg').textContent = T('calDenied'); return; }
-    if(!(await impLoadCals())){ $('impMsg').textContent = T('calNone'); return; }
-    imp.on = true; save(); renderImp(); $('impMsg').textContent = '';
-    await importSync(true);
-  }catch(e){ $('impMsg').textContent = String(e); }
+    if(!g.granted){ gmsg(T('calDenied')); return; }
+    const a = await CAL.pickAccount();
+    if(!a || !a.name) return;
+    if(!gacc || gacc.name !== a.name){ await calClearAll(); cal.calId = null; imp.ids = []; gEvents = []; impCals = []; }
+    gacc = {name:a.name, type:a.type}; saveCal();
+    gmsg((await loadCals()) ? T('gPicked') : T('calNone'));
+    save(); renderG();
+  }catch(e){ gmsg(String(e)); }
 };
-function accOpen(add){
-  const m = $('accMsg');
-  if(!CAL){ m.textContent = T('accNA'); return; }
-  m.textContent = T('accOpening');
-  CAL.openAccounts({add}).then(() => { m.textContent = T('accOpened'); }).catch(e => {
-    const s = String((e && e.message) || e);
-    m.textContent = (/implement|UNIMPL/i.test(s) ? T('accOld') : s) + '\n' + T('accManual');
-  });
+async function syncGoogle(manual){
+  if(!CAL || !gacc) { if(manual) gmsg(CAL ? T('gNone') : T('calNA')); return; }
+  try{
+    const g = await CAL.requestAccess();
+    if(!g.granted){ if(manual) gmsg(T('calDenied')); return; }
+    if(manual) gmsg(T('gSyncing'));
+    try{ await CAL.refresh(); }catch(e){}
+    if(!(await loadCals())){ if(manual) gmsg(T('calNone')); return; }
+    cal.on = true; imp.on = true; saveCal();
+    await calSyncAll();
+    await importSync();
+    lastSync = Date.now(); localStorage.setItem('ps_lastsync', lastSync);
+    save(); renderG();
+    if(manual) gmsg(T('gDone').replace('{n}', gEvents.length));
+  }catch(e){ if(manual) gmsg(String(e)); }
 }
-$('accAdd').onclick = () => accOpen(true);
-$('accList').onclick = () => accOpen(false);
-$('impNow').onclick = async () => { try{ await CAL.refresh(); }catch(e){} await importSync(true); };
+$('gSync').onclick = () => syncGoogle(true);
+$('calSel').onchange = async () => {
+  await calClearAll(); cal.calId = +$('calSel').value; saveCal();
+  if(cal.on) await calSyncAll();
+};
+$('autoOn').onclick = () => { autoSync = !autoSync; saveCal(); renderG(); if(autoSync) autoTick(); };
+function autoTick(){ if(CAL && autoSync && gacc && Date.now() - lastSync >= 3600000) syncGoogle(false); }
 
 /* ---------- calendar & day page ---------- */
 function dateTitle(ds){
@@ -643,7 +647,7 @@ function refreshSoundUI(){
   renderCfg(); renderAlarms();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { refreshSoundUI(); renderCalSet(); renderImp(); if(CAL && cal.on) calLoadList().catch(() => {}); if(CAL && imp.on) impLoadCals().catch(() => {}); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
@@ -814,7 +818,8 @@ async function init(){
   applyLang(); save();
   if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); }
   if(CAL && CAL.addListener){ try{ CAL.addListener('calendarChanged', impSoon); }catch(e){} }
-  if(APP && APP.addListener){ APP.addListener('resume', () => { if(CAL && $('mCfg').classList.contains('on')){ impLoadCals().catch(() => {}); if(cal.on) calLoadList().catch(() => {}); } if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); impSoon(); } }); }
+  autoTick(); setInterval(autoTick, 300000);
+  if(APP && APP.addListener){ APP.addListener('resume', () => { autoTick(); if(CAL && $('mCfg').classList.contains('on') && gacc) loadCals().catch(() => {}); if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); impSoon(); } }); }
 }
 init();
 </script>
