@@ -21,7 +21,7 @@ jobs:
         run: cp android-native/*.java android/app/src/main/java/com/proschedule/app/
       - name: Tambah permission notifikasi
         run: |
-          sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <application#' android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.READ_CALENDAR"/>\n    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>\n    <application#' android/app/src/main/AndroidManifest.xml
       - name: Bundle alarm sounds
         run: |
           RAW=android/app/src/main/res/raw
@@ -42,4 +42,3 @@ jobs:
         with:
           name: ProSchedule-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
- 
