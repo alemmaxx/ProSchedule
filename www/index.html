@@ -187,6 +187,7 @@ body.sub .logo{display:none}
   <div class="row"><button id="accAdd" data-i="accAdd"></button></div>
   <div class="row"><button class="ghost" id="accList" data-i="accList"></button></div>
   <p class="hint" data-i="accHint"></p>
+  <p class="hint" id="accMsg" style="white-space:pre-line;color:var(--bm);font-weight:600"></p>
   <div class="toprow"><b data-i="calSync"></b><button class="tog" id="calOn">OFF</button></div>
   <div id="calFlds" class="hide">
     <label data-i="calPick"></label><select id="calSel"></select>
@@ -206,7 +207,7 @@ body.sub .logo{display:none}
   <div class="sndrow"><select id="tsSound"></select><button class="icon" id="tsPlay">▶</button></div>
   <div class="row"><button id="testBtn" data-i="testBtn"></button></div>
   <div class="row"><button class="ghost" id="cfgClose" data-i="close"></button></div>
-  <p class="hint" style="text-align:center">ProSchedule v7 · alarm volume + sounds + kalendar + import Google</p>
+  <p class="hint" style="text-align:center">ProSchedule v8 · alarm volume + sounds + kalendar + import Google</p>
 </div></div>
 
 <div class="modal mid" id="mExit"><div class="sheet">
@@ -254,6 +255,7 @@ const I = {
   cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini berbunyi apabila app dibuka atau notifikasi ditekan. Untuk bunyi penuh walaupun app ditutup, letak MP3 dalam folder custom-sounds di GitHub.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(dalam app)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
   ringStop:'Matikan',
+  accNA:'Butang ini hanya berfungsi dalam APK ProSchedule (bukan dalam browser).', accOpening:'Membuka skrin akaun...', accOpened:'Skrin akaun dibuka. Selepas siap, kembali ke ProSchedule.', accOld:'APK ini belum ada fungsi akaun. Kemas kini fail android-native/CalendarSyncPlugin.java dalam repo, build semula, uninstall APK lama dan install.', accManual:'Cara manual: Tetapan telefon → Akaun (atau Pengguna & akaun) → Tambah akaun → Google.',
   accAdd:'Login / tambah akaun Google', accList:'Pilih dari senarai akaun', accHint:'Skrin akaun Google Android akan dibuka: pilih akaun dalam senarai atau tekan Tambah akaun untuk masuk manual. Selepas siap, kembali ke ProSchedule dan tekan ON di bawah.',
   allDay:'Seharian', impSync:'Import jadual dari Google Calendar', impPick:'Kalendar yang diimport', impNow:'Sync dari Google sekarang', impDone:'Selesai: {n} jadual diimport.',
   evSnd:'Bunyi notifikasi jadual (meeting, deadline)',
@@ -276,6 +278,7 @@ const I = {
   cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play when the app is open or the notification is tapped. For full sound even when the app is closed, put the MP3 in the custom-sounds folder on GitHub.', mp3Big:'File too large (max 10MB).', appOnly:'(in-app)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
   ringStop:'Stop',
+  accNA:'This button only works in the ProSchedule APK (not in a browser).', accOpening:'Opening account screen...', accOpened:'Account screen opened. When done, come back to ProSchedule.', accOld:'This APK does not have the account feature yet. Update android-native/CalendarSyncPlugin.java in the repo, rebuild, uninstall the old APK and install.', accManual:'Manual way: phone Settings → Accounts (or Users & accounts) → Add account → Google.',
   accAdd:'Sign in / add Google account', accList:'Choose from account list', accHint:'The Android Google account screen opens: pick an account from the list or tap Add account to sign in manually. When done, come back to ProSchedule and turn ON below.',
   allDay:'All day', impSync:'Import schedules from Google Calendar', impPick:'Calendars to import', impNow:'Sync from Google now', impDone:'Done: {n} schedules imported.',
   evSnd:'Schedule notification sound (meeting, deadline)',
@@ -497,8 +500,17 @@ $('impOn').onclick = async () => {
     await importSync(true);
   }catch(e){ $('impMsg').textContent = String(e); }
 };
-$('accAdd').onclick = () => { if(!CAL){ $('calMsg').textContent = T('calNA'); return; } CAL.openAccounts({add:true}).catch(e => { $('calMsg').textContent = String(e); }); };
-$('accList').onclick = () => { if(!CAL){ $('calMsg').textContent = T('calNA'); return; } CAL.openAccounts({add:false}).catch(e => { $('calMsg').textContent = String(e); }); };
+function accOpen(add){
+  const m = $('accMsg');
+  if(!CAL){ m.textContent = T('accNA'); return; }
+  m.textContent = T('accOpening');
+  CAL.openAccounts({add}).then(() => { m.textContent = T('accOpened'); }).catch(e => {
+    const s = String((e && e.message) || e);
+    m.textContent = (/implement|UNIMPL/i.test(s) ? T('accOld') : s) + '\n' + T('accManual');
+  });
+}
+$('accAdd').onclick = () => accOpen(true);
+$('accList').onclick = () => accOpen(false);
 $('impNow').onclick = async () => { try{ await CAL.refresh(); }catch(e){} await importSync(true); };
 
 /* ---------- calendar & day page ---------- */

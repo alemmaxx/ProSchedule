@@ -246,20 +246,27 @@ public class CalendarSyncPlugin extends Plugin {
   // add=false -> senarai akaun dalam telefon
   @PluginMethod
   public void openAccounts(PluginCall call) {
-    try {
-      boolean add = Boolean.TRUE.equals(call.getBoolean("add", true));
-      Intent i;
-      if (add) {
-        i = new Intent(Settings.ACTION_ADD_ACCOUNT);
-        i.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[] { "com.google" });
-      } else {
-        i = new Intent(Settings.ACTION_SYNC_SETTINGS);
-      }
-      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      getContext().startActivity(i);
-      call.resolve();
-    } catch (Exception e) {
-      call.reject(String.valueOf(e.getMessage()));
+    boolean add = Boolean.TRUE.equals(call.getBoolean("add", true));
+    Intent first;
+    if (add) {
+      first = new Intent(Settings.ACTION_ADD_ACCOUNT);
+      first.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[] { "com.google" });
+    } else {
+      first = new Intent(Settings.ACTION_SYNC_SETTINGS);
     }
+    Intent[] tries = { first, new Intent(Settings.ACTION_SYNC_SETTINGS), new Intent(Settings.ACTION_SETTINGS) };
+    String err = "no activity";
+    for (Intent i : tries) {
+      try {
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (getActivity() != null) getActivity().startActivity(i);
+        else getContext().startActivity(i);
+        call.resolve();
+        return;
+      } catch (Exception e) {
+        err = String.valueOf(e.getMessage());
+      }
+    }
+    call.reject(err);
   }
 }
