@@ -19,6 +19,10 @@ jobs:
       - run: npx cap add android
       - name: Channel notifikasi guna volume alarm
         run: cp android-native/*.java android/app/src/main/java/com/proschedule/app/
+      - name: Tambah pustaka Google (kotak pilih akaun)
+        run: |
+          awk '{print} /^dependencies \{/{print "    implementation \"com.google.android.gms:play-services-base:18.2.0\""}' android/app/build.gradle > /tmp/build.gradle && mv /tmp/build.gradle android/app/build.gradle
+          grep -n "play-services-base" android/app/build.gradle
       - name: Tambah permission notifikasi
         run: |
           sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.READ_CALENDAR"/>\n    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>\n    <application#' android/app/src/main/AndroidManifest.xml
@@ -42,3 +46,4 @@ jobs:
         with:
           name: ProSchedule-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+ 
