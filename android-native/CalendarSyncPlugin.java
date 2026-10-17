@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,8 @@ import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
 import androidx.activity.result.ActivityResult;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TimeZone;
@@ -122,6 +125,26 @@ public class CalendarSyncPlugin extends Plugin {
     }
   }
 
+  // Maklumat diagnostik untuk kotak DIAG dalam app
+  @PluginMethod
+  public void diag(PluginCall call) {
+    JSObject o = new JSObject();
+    o.put("sdk", Build.VERSION.SDK_INT);
+    o.put("calPerm", has());
+    try {
+      int r = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
+      o.put("playServices", r == ConnectionResult.SUCCESS ? "OK" : ("KOD " + r));
+    } catch (Throwable e) {
+      o.put("playServices", "ralat: " + e);
+    }
+    try {
+      o.put("googleAccTerlihat", AccountManager.get(getContext()).getAccountsByType("com.google").length);
+    } catch (Throwable e) {
+      o.put("googleAccTerlihat", "ralat: " + e);
+    }
+    call.resolve(o);
+  }
+
   // Kotak pilih akaun Google (senarai akaun dalam telefon + "Tambah akaun lain")
   @PluginMethod
   public void pickAccount(PluginCall call) {
@@ -147,7 +170,7 @@ public class CalendarSyncPlugin extends Plugin {
       o.put("type", data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
       call.resolve(o);
     } else {
-      call.resolve(new JSObject().put("cancelled", true));
+      call.resolve(new JSObject().put("cancelled", true).put("resultCode", result.getResultCode()));
     }
   }
 
