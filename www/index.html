@@ -103,6 +103,9 @@ body.sub .logo{display:none}
 .toprow b{font-family:var(--display);font-size:17px}
 .rowsel{font-size:14px;padding:6px 8px;margin-top:6px;border-radius:10px;max-width:210px}
 .gacc{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:16px;padding:10px 12px;border:2px dashed var(--ink);border-radius:14px;background:var(--paper);overflow:hidden;text-overflow:ellipsis}
+@keyframes slL{from{transform:translateX(48px);opacity:.25}to{transform:none;opacity:1}}
+@keyframes slR{from{transform:translateX(-48px);opacity:.25}to{transform:none;opacity:1}}
+.slL{animation:slL .22s ease-out}.slR{animation:slR .22s ease-out}
 </style>
 </head>
 <body>
@@ -197,13 +200,24 @@ body.sub .logo{display:none}
   <p class="hint" id="gLast"></p>
   <p class="hint" data-i="gHint"></p>
   <div class="sep"></div>
+  <h2 data-i="csHead"></h2>
+  <p class="hint" data-i="csHint"></p>
+  <label data-i="csId"></label>
+  <div class="sndrow"><div id="csCode" class="gacc" style="user-select:text;-webkit-user-select:text;letter-spacing:1px;font-size:15px"></div><button class="icon" id="csCopy" data-i="csCopy"></button></div>
+  <div class="row"><button id="csNew" data-i="csNew"></button></div>
+  <label data-i="csJoinL"></label>
+  <div class="sndrow"><input id="csIn" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" style="flex:1;min-width:0"><button class="icon" id="csJoin" data-i="csJoin"></button></div>
+  <div class="row"><button id="csNow" data-i="csNow"></button><button class="ghost" id="csOff" data-i="csOff"></button></div>
+  <p class="hint" id="csMsg" style="white-space:pre-line;color:var(--ink);font-weight:600"></p>
+  <p class="hint" id="csLast"></p>
+  <div class="sep"></div>
   <h2 data-i="testHead"></h2>
   <label data-i="testSec"></label><input type="number" id="testSec" value="10" min="1" max="3600">
   <label data-i="fSound"></label>
   <div class="sndrow"><select id="tsSound"></select><button class="icon" id="tsPlay">▶</button></div>
   <div class="row"><button id="testBtn" data-i="testBtn"></button></div>
   <div class="row"><button class="ghost" id="cfgClose" data-i="close"></button></div>
-  <p class="hint" style="text-align:center">ProSchedule v9 · alarm volume + sounds + kalendar + import Google</p>
+  <p class="hint" style="text-align:center">ProSchedule v10 · alarm + kalendar Google + sync ID antara telefon</p>
 </div></div>
 
 <div class="modal mid" id="mExit"><div class="sheet">
@@ -251,7 +265,7 @@ const I = {
   cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini berbunyi apabila app dibuka atau notifikasi ditekan. Untuk bunyi penuh walaupun app ditutup, letak MP3 dalam folder custom-sounds di GitHub.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(dalam app)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
   ringStop:'Matikan',
-  gAcc:'Akaun Google', gNone:'(belum dipilih)', gPick:'Pilih akaun', gSync:'Sync Google Calendar', gSyncing:'Sedang sync...', gDone:'Selesai: {n} jadual Google diimport dan jadual ProSchedule dihantar.', gPicked:'Akaun dipilih. Tekan Sync Google Calendar.', autoSync:'Auto sync setiap 1 jam', gLast:'Sync terakhir:', gHint:'Alarm dan bunyi hanya dalam ProSchedule (APK). Jadual yang dihantar ke Google Calendar tiada alarm. Auto sync berjalan bila app dibuka.',
+  gAcc:'Akaun Google', gNone:'(belum dipilih)', gPick:'Pilih akaun', gSync:'Sync Google Calendar', gSyncing:'Sedang sync...', gDone:'Selesai: {n} jadual Google diimport dan jadual ProSchedule dihantar.', gPicked:'Akaun dipilih. Tekan Sync Google Calendar.', autoSync:'Auto sync setiap 1 jam', gLast:'Sync terakhir:', csHead:'Sync antara telefon (ID)', csHint:'Buat ID di satu telefon, masukkan ID yang sama di telefon lain. Jadual, alarm dan alarm harian sync bila app dibuka atau bila ada perubahan. Jangan kongsi ID dengan orang yang tak dipercayai.', csId:'ID anda', csNone:'(belum ada ID)', csCopy:'Salin', csNew:'Buat ID baru', csJoinL:'Atau masukkan ID dari telefon lain', csJoin:'Sambung', csNow:'Sync sekarang', csOff:'Putus ID', csBad:'ID tidak sah (perlu 20 huruf/nombor).', csCopied:'ID disalin.', csSyncing:'Sedang sync...', csDone:'Sync siap. Diterima dari awan: {n}', csQNew:'Buat ID baru? ID lama tidak lagi digunakan oleh telefon ini.', csQOff:'Putuskan sambungan ID di telefon ini?', csLast:'Sync awan terakhir:', gHint:'Alarm dan bunyi hanya dalam ProSchedule (APK). Jadual yang dihantar ke Google Calendar tiada alarm. Auto sync berjalan bila app dibuka.',
   accNA:'Butang ini hanya berfungsi dalam APK ProSchedule (bukan dalam browser).', accOpening:'Membuka skrin akaun...', accOpened:'Skrin akaun dibuka. Selepas siap, kembali ke ProSchedule.', accOld:'APK ini belum ada fungsi akaun. Kemas kini fail android-native/CalendarSyncPlugin.java dalam repo, build semula, uninstall APK lama dan install.', accManual:'Cara manual: Tetapan telefon → Akaun (atau Pengguna & akaun) → Tambah akaun → Google.',
   accAdd:'Login / tambah akaun Google', accList:'Pilih dari senarai akaun', accHint:'Skrin akaun Google Android akan dibuka: pilih akaun dalam senarai atau tekan Tambah akaun untuk masuk manual. Selepas siap, kembali ke ProSchedule dan tekan ON di bawah.',
   allDay:'Seharian', impSync:'Import jadual dari Google Calendar', impPick:'Kalendar yang diimport', impNow:'Sync dari Google sekarang', impDone:'Selesai: {n} jadual diimport.',
@@ -275,7 +289,7 @@ const I = {
   cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play when the app is open or the notification is tapped. For full sound even when the app is closed, put the MP3 in the custom-sounds folder on GitHub.', mp3Big:'File too large (max 10MB).', appOnly:'(in-app)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
   ringStop:'Stop',
-  gAcc:'Google account', gNone:'(not selected)', gPick:'Choose account', gSync:'Sync Google Calendar', gSyncing:'Syncing...', gDone:'Done: {n} Google schedules imported and ProSchedule schedules sent.', gPicked:'Account selected. Tap Sync Google Calendar.', autoSync:'Auto sync every 1 hour', gLast:'Last sync:', gHint:'Alarms and sounds are only in ProSchedule (APK). Schedules sent to Google Calendar have no alarm. Auto sync runs while the app is open.',
+  gAcc:'Google account', gNone:'(not selected)', gPick:'Choose account', gSync:'Sync Google Calendar', gSyncing:'Syncing...', gDone:'Done: {n} Google schedules imported and ProSchedule schedules sent.', gPicked:'Account selected. Tap Sync Google Calendar.', autoSync:'Auto sync every 1 hour', gLast:'Last sync:', csHead:'Sync between phones (ID)', csHint:'Create an ID on one phone and enter the same ID on the other. Schedules, alarms and day alarms sync when the app opens or when something changes. Do not share the ID with people you do not trust.', csId:'Your ID', csNone:'(no ID yet)', csCopy:'Copy', csNew:'Create new ID', csJoinL:'Or enter the ID from another phone', csJoin:'Connect', csNow:'Sync now', csOff:'Disconnect', csBad:'Invalid ID (needs 20 letters/numbers).', csCopied:'ID copied.', csSyncing:'Syncing...', csDone:'Sync done. Received from cloud: {n}', csQNew:'Create a new ID? This phone will stop using the old ID.', csQOff:'Disconnect the ID on this phone?', csLast:'Last cloud sync:', gHint:'Alarms and sounds are only in ProSchedule (APK). Schedules sent to Google Calendar have no alarm. Auto sync runs while the app is open.',
   accNA:'This button only works in the ProSchedule APK (not in a browser).', accOpening:'Opening account screen...', accOpened:'Account screen opened. When done, come back to ProSchedule.', accOld:'This APK does not have the account feature yet. Update android-native/CalendarSyncPlugin.java in the repo, rebuild, uninstall the old APK and install.', accManual:'Manual way: phone Settings → Accounts (or Users & accounts) → Add account → Google.',
   accAdd:'Sign in / add Google account', accList:'Choose from account list', accHint:'The Android Google account screen opens: pick an account from the list or tap Add account to sign in manually. When done, come back to ProSchedule and turn ON below.',
   allDay:'All day', impSync:'Import schedules from Google Calendar', impPick:'Calendars to import', impNow:'Sync from Google now', impDone:'Done: {n} schedules imported.',
@@ -321,6 +335,7 @@ function save(){
   localStorage.setItem('ps_gevents', JSON.stringify(gEvents));
   localStorage.setItem('ps_ghide', JSON.stringify(gHide));
   resched();
+  try{ if(!csBusy) csSoon(); }catch(e){}
 }
 
 /* ---------- sounds ---------- */
@@ -411,7 +426,7 @@ const tlabel = e => e.allDay ? T('allDay') : e.time;
 
 /* hantar jadual ProSchedule -> Google Calendar (tanpa alarm) */
 async function calUpsert(e){
-  if(!CAL || !cal.on || !cal.calId) return;
+  if(!CAL || !cal.on || !cal.calId || e.fc) return;
   try{
     const start = new Date(`${e.date}T${e.time}:00`).getTime();
     const r = await CAL.upsert({calId: cal.calId, eventId: calMap[e.id] || -1, title: e.title,
@@ -694,7 +709,7 @@ function refreshSoundUI(){
   renderCfg(); renderAlarms();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { gmsg('versi: 17Okt-d'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { gmsg('versi: 17Okt-f'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
@@ -731,8 +746,23 @@ $('evSave').onclick = () => {
   events.push(ne);
   save(); calUpsert(ne); syncSoon(); $('mEv').classList.remove('on'); renderCal(); renderDay();
 };
-$('prev').onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
-$('next').onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
+function goMonth(d){
+  view.setMonth(view.getMonth() + d); renderCal();
+  const c = $('cal'); c.classList.remove('slL','slR'); void c.offsetWidth; c.classList.add(d > 0 ? 'slL' : 'slR');
+}
+$('prev').onclick = () => goMonth(-1);
+$('next').onclick = () => goMonth(1);
+/* seret kalendar ke kiri = bulan depan, ke kanan = bulan lepas */
+(function(){
+  const box = $('cal').parentElement; let x0 = 0, y0 = 0, on = false;
+  box.style.touchAction = 'pan-y';
+  box.addEventListener('touchstart', e => { if(e.touches.length !== 1){ on = false; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; on = true; }, {passive:true});
+  box.addEventListener('touchend', e => {
+    if(!on) return; on = false;
+    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) goMonth(dx < 0 ? 1 : -1);
+  }, {passive:true});
+})();
 $('btnLang').onclick = () => { lang = lang==='ms' ? 'en' : 'ms'; localStorage.setItem('ps_lang', lang); applyLang(); resched(); };
 
 /* ---------- navigation & back button ---------- */
@@ -849,6 +879,131 @@ async function resched(){
   }catch(err){ console.log('resched error', err); }
 }
 
+/* ---------- Sync antara telefon (ID awan, Firestore REST) ---------- */
+const FB = {apiKey:'AIzaSyAi5O-7iD9E67Gc_mLLW726_ms5EkmV-5U', projectId:'ar-trading-b246f'};
+let cs = J('ps_cloud', {code:'', meta:{}, last:0});
+let csBusy = false, csTimer = null;
+const csSave = () => localStorage.setItem('ps_cloud', JSON.stringify(cs));
+const csMsg = t => { const el = $('csMsg'); if(el) el.textContent = t; };
+const csUrl = () => `https://firestore.googleapis.com/v1/projects/${FB.projectId}/databases/(default)/documents/psync/${cs.code}?key=${FB.apiKey}`;
+const rid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+const csShow = c => c.replace(/(.{5})(?=.)/g, '$1-');
+function csNewCode(){
+  const al = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b = new Uint8Array(20);
+  crypto.getRandomValues(b);
+  return Array.from(b, x => al[x % 32]).join('');
+}
+function renderCS(){
+  if(!$('csCode')) return;
+  $('csCode').textContent = cs.code ? csShow(cs.code) : T('csNone');
+  $('csLast').textContent = cs.last ? `${T('csLast')} ${new Date(cs.last).toLocaleString()}` : '';
+}
+function csSnapshot(){
+  const m = {};
+  events.forEach(e => { if(!e.uid) e.uid = rid(); m['e:'+e.uid] = {date:e.date, time:e.time, title:e.title, type:e.type, rem:e.rem, note:e.note || ''}; });
+  alarms.forEach(a => { if(!a.uid) a.uid = rid(); m['a:'+a.uid] = {t:a.t, rep:a.rep, sound:a.sound, on:!!a.on, at:a.at || 0}; });
+  Object.keys(dayAlarms).forEach(d => { const a = dayAlarms[d]; if(a) m['d:'+d] = {on:!!a.on, t:a.t, sound:a.sound}; });
+  localStorage.setItem('ps_events', JSON.stringify(events));
+  localStorage.setItem('ps_alarms', JSON.stringify(alarms));
+  return m;
+}
+// terapkan satu perubahan dari awan ke telefon ini; pulang 1 jika ada perubahan
+function csApply(k, v){
+  const t = k[0], id = k.slice(2);
+  if(t === 'e'){
+    const i = events.findIndex(e => e.uid === id);
+    if(v === null){ if(i < 0) return 0; const e = events[i]; events.splice(i,1); calRemove(e.id); return 1; }
+    if(i >= 0){ Object.assign(events[i], v); return 1; }
+    events.push(Object.assign({id:counter++, uid:id, fc:1}, v)); return 1;
+  }
+  if(t === 'a'){
+    const i = alarms.findIndex(a => a.uid === id);
+    if(v === null){ if(i < 0) return 0; alarms.splice(i,1); return 1; }
+    if(v.rep === 'once' && v.at && v.at < Date.now()) return 0;
+    if(i >= 0){ Object.assign(alarms[i], v); return 1; }
+    if(alarms.length >= 90) return 0;
+    alarms.push(Object.assign({id:aCounter++, uid:id}, v)); return 1;
+  }
+  if(t === 'd' && v){ dayAlarms[id] = v; return 1; }
+  return 0;
+}
+async function csSync(mode, manual){
+  if(!cs.code || csBusy) return;
+  csBusy = true;
+  try{
+    const now = Date.now();
+    const snap = csSnapshot();
+    const loc = {}; let changed = false;
+    for(const k in snap){
+      const h = JSON.stringify(snap[k]), m = cs.meta[k];
+      if(m && m.h === h) loc[k] = {v:snap[k], ts:m.ts};
+      else { loc[k] = {v:snap[k], ts:now}; changed = true; }
+    }
+    for(const k in cs.meta){
+      if(k in snap) continue;
+      const m = cs.meta[k];
+      if(m.h === 'null') loc[k] = {v:null, ts:m.ts};
+      else { loc[k] = {v:null, ts:now}; changed = true; }
+    }
+    if(mode === 'change' && !changed) return;
+    if(manual) csMsg(T('csSyncing'));
+    let remote = {};
+    const r = await fetch(csUrl());
+    if(r.status !== 404){
+      if(!r.ok) throw new Error('HTTP ' + r.status + ' (baca awan) ' + (await r.text()).slice(0,150));
+      const j = await r.json();
+      try{ remote = JSON.parse(j.fields.data.stringValue); }catch(e){ remote = {}; }
+    }
+    const out = {}; let push = false, pulled = 0;
+    new Set(Object.keys(loc).concat(Object.keys(remote))).forEach(k => {
+      const L = loc[k], R = remote[k];
+      if(L && (!R || L.ts > R.ts)){ out[k] = L; push = true; }
+      else if(R && (!L || R.ts > L.ts)){ out[k] = R; pulled += csApply(k, R.v); }
+      else out[k] = L;
+    });
+    const cutoff = now - 60*86400000;
+    Object.keys(out).forEach(k => { if(out[k].v === null && out[k].ts < cutoff){ delete out[k]; push = true; } });
+    if(pulled){
+      save(); renderCal(); renderDay(); renderDayPopup(); renderAlarms();
+      syncSoon();
+    }
+    if(push){
+      const body = {fields:{data:{stringValue:JSON.stringify(out)}, updated:{integerValue:String(now)}}};
+      const w = await fetch(csUrl(), {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+      if(!w.ok) throw new Error('HTTP ' + w.status + ' (tulis awan) ' + (await w.text()).slice(0,150));
+    }
+    const fin = csSnapshot(), meta = {};
+    Object.keys(out).forEach(k => { const e = out[k]; meta[k] = {ts:e.ts, h:JSON.stringify(e.v === null ? null : (k in fin ? fin[k] : null))}; });
+    cs.meta = meta; cs.last = Date.now(); csSave(); renderCS();
+    if(manual || pulled) csMsg(T('csDone').replace('{n}', pulled));
+  }catch(e){
+    csMsg('Ralat sync awan: ' + String((e && e.message) || e));
+  }finally{
+    csBusy = false;
+  }
+}
+function csSoon(){
+  if(!cs || !cs.code) return;
+  clearTimeout(csTimer);
+  csTimer = setTimeout(() => csSync('change'), 3000);
+}
+$('csNew').onclick = () => {
+  if(cs.code && !confirm(T('csQNew'))) return;
+  cs = {code:csNewCode(), meta:{}, last:0}; csSave(); renderCS(); csSync('open', true);
+};
+$('csJoin').onclick = () => {
+  const c = $('csIn').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if(c.length !== 20){ csMsg(T('csBad')); return; }
+  cs = {code:c, meta:{}, last:0}; csSave(); $('csIn').value = ''; renderCS(); csSync('open', true);
+};
+$('csNow').onclick = () => { if(!cs.code){ csMsg(T('csNone')); return; } csSync('open', true); };
+$('csOff').onclick = () => { if(!cs.code || !confirm(T('csQOff'))) return; cs = {code:'', meta:{}, last:0}; csSave(); renderCS(); csMsg(''); };
+$('csCopy').onclick = async () => {
+  if(!cs.code) return;
+  try{ await navigator.clipboard.writeText(cs.code); csMsg(T('csCopied')); }catch(e){ csMsg(csShow(cs.code)); }
+};
+setInterval(() => csSync('open'), 1800000);
+
 /* ---------- language & init ---------- */
 function applyLang(){
   document.documentElement.lang = lang;
@@ -862,7 +1017,7 @@ function applyLang(){
   $('alRep').innerHTML = `<option value="once">${T('once')}</option><option value="daily">${T('daily')}</option>`;
   $('alRep').value = rp;
   $('dpTime').innerHTML = DAYTIMES.map(t => `<option value="${t}">${t}</option>`).join('');
-  renderCal(); renderDay(); renderTypes(); renderAlarms(); renderCfg(); renderDayPopup();
+  renderCal(); renderDay(); renderTypes(); renderAlarms(); renderCfg(); renderDayPopup(); renderCS();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
 async function init(){
@@ -872,7 +1027,8 @@ async function init(){
   if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); }
   if(CAL && CAL.addListener){ try{ CAL.addListener('calendarChanged', impSoon); }catch(e){} }
   autoTick(); setInterval(autoTick, 300000);
-  if(APP && APP.addListener){ APP.addListener('resume', () => { autoTick(); if(CAL && $('mCfg').classList.contains('on') && gacc) loadCals().catch(() => {}); if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); impSoon(); } }); }
+  csSync('open');
+  if(APP && APP.addListener){ APP.addListener('resume', () => { autoTick(); csSync('open'); if(CAL && $('mCfg').classList.contains('on') && gacc) loadCals().catch(() => {}); if(CAL && imp.on){ try{ CAL.refresh().catch(() => {}); }catch(e){} importSync(); impSoon(); } }); }
 }
 init();
 </script>
