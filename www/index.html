@@ -394,6 +394,7 @@ let gEvents = J('ps_gevents', []);
 let gHide = J('ps_ghide', []);
 let gacc = J('ps_gacc', null);
 let autoSync = J('ps_auto', false);
+if(!localStorage.getItem('ps_auto_mig')){ autoSync = true; localStorage.setItem('ps_auto_mig','1'); localStorage.setItem('ps_auto','true'); }
 let lastSync = +(localStorage.getItem('ps_lastsync') || 0);
 let impCals = [];
 const saveCal = () => {
@@ -427,7 +428,7 @@ async function calSyncAll(){ for(const e of events) if(!calMap[e.id]) await calU
 async function calClearAll(){ for(const id of Object.keys(calMap)) await calRemove(id); }
 function delEvent(idv){
   if(String(idv).startsWith('g')){ if(!gHide.includes(idv)) gHide.push(idv); }
-  else { const n = +idv; events = events.filter(e => e.id !== n); calRemove(n); }
+  else { const n = +idv; events = events.filter(e => e.id !== n); calRemove(n); syncSoon(); }
   save(); renderCal(); renderDay(); renderDayPopup();
 }
 
@@ -492,7 +493,7 @@ function renderG(){
 }
 $('gPick').onclick = async () => {
   const L = [];
-  const lg = t => { L.push(t); gmsg('DIAG 17Okt-c\n' + L.join('\n')); };
+  const lg = t => { L.push(t); gmsg('DIAG 17Okt-d\n' + L.join('\n')); };
   const er = e => String((e && (e.message || e.errorMessage)) || e);
   const C = window.Capacitor;
   lg('1 Capacitor: ' + (C ? 'ada' : 'TIADA'));
@@ -550,6 +551,18 @@ $('calSel').onchange = async () => {
 };
 $('autoOn').onclick = () => { autoSync = !autoSync; saveCal(); renderG(); if(autoSync) autoTick(); };
 function autoTick(){ if(CAL && autoSync && gacc && Date.now() - lastSync >= 3600000) syncGoogle(false); }
+setInterval(autoTick, 60000);
+/* sync terus bila jadual ditambah / dipadam (tunggu 1.5s supaya perubahan bertimbun jadi satu) */
+let chgTimer = null;
+function syncSoon(){
+  if(!CAL || !gacc) return;
+  clearTimeout(chgTimer);
+  chgTimer = setTimeout(async () => {
+    if(!cal.on){ if(autoSync) syncGoogle(false); return; }
+    try{ await calSyncAll(); await CAL.refresh(); }catch(e){}
+    lastSync = Date.now(); localStorage.setItem('ps_lastsync', lastSync); renderG();
+  }, 1500);
+}
 
 /* ---------- calendar & day page ---------- */
 function dateTitle(ds){
@@ -681,7 +694,7 @@ function refreshSoundUI(){
   renderCfg(); renderAlarms();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { gmsg('versi: 17Okt-c'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { gmsg('versi: 17Okt-d'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
@@ -716,7 +729,7 @@ $('evSave').onclick = () => {
   if(!title){ alert(T('needTitle')); return; }
   const ne = {id:counter++, date:selected, time:$('evTime').value || '09:00', title, type:evType, rem:+$('evRem').value, note:$('evNote').value.trim()};
   events.push(ne);
-  save(); calUpsert(ne); $('mEv').classList.remove('on'); renderCal(); renderDay();
+  save(); calUpsert(ne); syncSoon(); $('mEv').classList.remove('on'); renderCal(); renderDay();
 };
 $('prev').onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
 $('next').onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
@@ -743,6 +756,12 @@ $('btnBack').onclick = goBack;
 $('exNo').onclick = () => $('mExit').classList.remove('on');
 $('exYes').onclick = () => { if(APP && APP.exitApp) APP.exitApp(); else window.close(); };
 $('ringStop').onclick = () => { stopAudio(); $('mRing').classList.remove('on'); };
+/* tekan di luar kotak popup (kawasan gelap) -> tutup. mEv (borang) & mRing (loceng) dikecualikan */
+['mDay','mAlarm','mCfg','mExit'].forEach(id => $(id).addEventListener('click', ev => {
+  if(ev.target !== $(id)) return;
+  if(id !== 'mExit') stopAudio();
+  $(id).classList.remove('on');
+}));
 
 /* ---------- notifications ---------- */
 function ring(n){
