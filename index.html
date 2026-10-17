@@ -491,26 +491,40 @@ function renderG(){
   $('gLast').textContent = lastSync ? `${T('gLast')} ${new Date(lastSync).toLocaleString()}` : '';
 }
 $('gPick').onclick = async () => {
+  const L = [];
+  const lg = t => { L.push(t); gmsg('DIAG 17Okt-c\n' + L.join('\n')); };
+  const er = e => String((e && (e.message || e.errorMessage)) || e);
+  const C = window.Capacitor;
+  lg('1 Capacitor: ' + (C ? 'ada' : 'TIADA'));
+  if(C) lg('2 platform: ' + (C.getPlatform ? C.getPlatform() : '?') + ' | native: ' + (C.isNativePlatform ? C.isNativePlatform() : '?'));
   CAL = CAL || detectCal();
-  if(!CAL){ gmsg(T('calNA') + calWhy()); return; }
+  lg('3 plugin CalendarSync: ' + (CAL ? 'ada' : 'TIADA'));
+  if(!CAL) return;
   try{
-    gmsg(T('accOpening'));
+    try{ lg('4 diag: ' + JSON.stringify(await CAL.diag())); }
+    catch(e){ lg('4 diag gagal: ' + er(e) + ' (mungkin APK lama)'); }
+    lg('5 minta kebenaran kalendar...');
     const g = await CAL.requestAccess();
-    if(!g.granted){ gmsg(T('calDenied')); return; }
+    lg('5 hasil kebenaran: ' + JSON.stringify(g));
+    if(!g.granted){ lg('BERHENTI: kebenaran kalendar ditolak'); return; }
+    lg('6 buka kotak pilih akaun...');
     let a;
     try{ a = await CAL.pickAccount(); }
     catch(pe){
-      // kotak pilih akaun gagal (APK lama / tiada Play Services) -> buka skrin akaun Android
-      gmsg(T('accOld') + ' (' + String(pe && pe.message || pe) + ')');
-      try{ await CAL.openAccounts({add:false}); }catch(oe){ gmsg(T('accManual')); }
+      lg('7 RALAT pickAccount: ' + er(pe));
+      lg('8 cuba buka skrin akaun Android...');
+      try{ await CAL.openAccounts({add:false}); lg('8 skrin akaun dibuka'); }catch(oe){ lg('8 gagal: ' + er(oe)); }
       return;
     }
-    if(!a || a.cancelled || !a.name){ gmsg(''); return; }
+    lg('7 hasil pickAccount: ' + JSON.stringify(a));
+    if(!a || a.cancelled || !a.name){ lg('BERHENTI: tiada akaun dipilih / dibatalkan'); return; }
     if(!gacc || gacc.name !== a.name){ await calClearAll(); cal.calId = null; imp.ids = []; gEvents = []; impCals = []; }
     gacc = {name:a.name, type:a.type}; saveCal();
-    gmsg((await loadCals()) ? T('gPicked') : T('calNone'));
+    const ok = await loadCals();
+    lg('9 akaun: ' + a.name + ' | kalendar ditemui: ' + (ok ? impCals.length : 0));
+    lg(ok ? T('gPicked') : T('calNone'));
     save(); renderG();
-  }catch(e){ gmsg(String(e)); }
+  }catch(e){ lg('RALAT: ' + er(e)); }
 };
 async function syncGoogle(manual){
   CAL = CAL || detectCal();
@@ -667,7 +681,7 @@ function refreshSoundUI(){
   renderCfg(); renderAlarms();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { gmsg('versi: 17Okt-b'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { gmsg('versi: 17Okt-c'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
