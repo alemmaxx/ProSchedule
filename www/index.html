@@ -278,7 +278,7 @@ const I = {
   dpAlarm:'Alarm ringkasan jadual', dpTime:'Masa alarm (10 malam – 7 pagi)', dpHint:'Berbunyi malam sebelum (10 malam ke atas) atau pagi hari tersebut (sehingga 7 pagi).', dpEmpty:'Tiada jadual pada hari ini.',
   alarmHead:'Senarai Alarm', newAlarm:'Alarm baru', fRepeat:'Ulang', once:'Sekali sahaja', daily:'Setiap hari', fSound:'Bunyi alarm', addAlarm:'+ Tambah ke senarai', noAlarm:'Tiada alarm.', del:'Padam',
   lblEsok:'jadual esok', lblIni:'jadual hari ini',
-  cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini berbunyi apabila app dibuka atau notifikasi ditekan. Untuk bunyi penuh walaupun app ditutup, letak MP3 dalam folder custom-sounds di GitHub.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(dalam app)', sndDefault:'Lalai (sistem)',
+  cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini menjadi bunyi alarm/notifikasi sebenar, walaupun app ditutup (Android 10 ke atas). Guna MP3 pendek (kurang 30 saat).', mp3Fail:'MP3 disimpan dalam app tetapi gagal dijadikan bunyi notifikasi (perlu Android 10 ke atas). Alarm akan guna bunyi lalai.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(MP3 saya)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
   ringStop:'Matikan',
   gAcc:'Akaun Google', gNone:'(belum dipilih)', gPick:'Pilih akaun', gSync:'Sync Google Calendar', gSyncing:'Sedang sync...', gDone:'Selesai: {n} jadual Google diimport dan jadual ProSchedule dihantar.', gPicked:'Akaun dipilih. Tekan Sync Google Calendar.', autoSync:'Auto sync setiap 1 jam', gLast:'Sync terakhir:', csHead:'Sync antara telefon (ID)', csHint:'Buat ID di satu telefon, masukkan ID yang sama di telefon lain. Jadual, alarm dan alarm harian sync bila app dibuka atau bila ada perubahan. Jangan kongsi ID dengan orang yang tak dipercayai.', csId:'ID anda', csNone:'(belum ada ID)', csCopy:'Salin', csNew:'Buat ID baru', csJoinL:'Atau masukkan ID dari telefon lain', csJoin:'Sambung', csNow:'Sync sekarang', csOff:'Putus ID', csBad:'ID tidak sah (perlu 20 huruf/nombor).', csCopied:'ID disalin.', csSyncing:'Sedang sync...', csDone:'Sync siap. Diterima dari awan: {n}', csQNew:'Buat ID baru? ID lama tidak lagi digunakan oleh telefon ini.', csQOff:'Putuskan sambungan ID di telefon ini?', csLast:'Sync awan terakhir:', gHint:'Alarm dan bunyi hanya dalam ProSchedule (APK). Jadual yang dihantar ke Google Calendar tiada alarm. Auto sync berjalan bila app dibuka.',
@@ -302,7 +302,7 @@ const I = {
   dpAlarm:'Schedule summary alarm', dpTime:'Alarm time (10 PM – 7 AM)', dpHint:'Rings the night before (10 PM onwards) or that morning (until 7 AM).', dpEmpty:'Nothing scheduled on this day.',
   alarmHead:'Alarm List', newAlarm:'New alarm', fRepeat:'Repeat', once:'Once', daily:'Every day', fSound:'Alarm sound', addAlarm:'+ Add to list', noAlarm:'No alarms.', del:'Delete',
   lblEsok:"tomorrow's schedule", lblIni:"today's schedule",
-  cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play when the app is open or the notification is tapped. For full sound even when the app is closed, put the MP3 in the custom-sounds folder on GitHub.', mp3Big:'File too large (max 10MB).', appOnly:'(in-app)', sndDefault:'Default (system)',
+  cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here become the real alarm/notification sound, even when the app is closed (Android 10 and up). Use a short MP3 (under 30 seconds).', mp3Fail:'MP3 saved in the app but could not be set as a notification sound (needs Android 10 or newer). Alarms will use the default sound.', mp3Big:'File too large (max 10MB).', appOnly:'(my MP3)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
   ringStop:'Stop',
   gAcc:'Google account', gNone:'(not selected)', gPick:'Choose account', gSync:'Sync Google Calendar', gSyncing:'Syncing...', gDone:'Done: {n} Google schedules imported and ProSchedule schedules sent.', gPicked:'Account selected. Tap Sync Google Calendar.', autoSync:'Auto sync every 1 hour', gLast:'Last sync:', csHead:'Sync between phones (ID)', csHint:'Create an ID on one phone and enter the same ID on the other. Schedules, alarms and day alarms sync when the app opens or when something changes. Do not share the ID with people you do not trust.', csId:'Your ID', csNone:'(no ID yet)', csCopy:'Copy', csNew:'Create new ID', csJoinL:'Or enter the ID from another phone', csJoin:'Connect', csNow:'Sync now', csOff:'Disconnect', csBad:'Invalid ID (needs 20 letters/numbers).', csCopied:'ID copied.', csSyncing:'Syncing...', csDone:'Sync done. Received from cloud: {n}', csQNew:'Create a new ID? This phone will stop using the old ID.', csQOff:'Disconnect the ID on this phone?', csLast:'Last cloud sync:', gHint:'Alarms and sounds are only in ProSchedule (APK). Schedules sent to Google Calendar have no alarm. Auto sync runs while the app is open.',
@@ -379,6 +379,19 @@ const toB64 = blob => new Promise((res,rej) => { const r = new FileReader(); r.o
 function stopAudio(){
   if(audio){ try{ audio.pause(); }catch(e){} audio = null; }
   if(AP){ try{ AP.stop().catch(() => {}); }catch(e){} }
+}
+const installedSnd = new Set();
+async function installUserSound(u){
+  if(!AP) return false;
+  if(installedSnd.has(u.id)) return true;
+  try{
+    const h = await AP.hasSound({id:u.id});
+    if(!h.has){
+      await AP.store({id:u.id, data: await toB64(u.blob)}); storedNative.add(u.id);
+      await AP.installSound({id:u.id, name:u.name});
+    }
+    installedSnd.add(u.id); return true;
+  }catch(e){ console.log('install sound failed', e); return false; }
 }
 async function playSound(id, loop){
   stopAudio();
@@ -713,6 +726,7 @@ function renderCfg(){
   document.querySelectorAll('[data-ds]').forEach(b => b.onclick = async () => {
     stopAudio();
     try{ await idbDel(b.dataset.ds); }catch(e){}
+    if(AP){ try{ await AP.removeSound({id:b.dataset.ds}); }catch(e){} installedSnd.delete(b.dataset.ds); }
     userSounds = userSounds.filter(s => s.id !== b.dataset.ds);
     let ch = false;
     alarms.forEach(a => { if(a.sound === b.dataset.ds){ a.sound = 'default'; ch = true; } });
@@ -725,7 +739,7 @@ function refreshSoundUI(){
   renderCfg(); renderAlarms();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { gmsg('versi: 17Okt-g'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { gmsg('versi: 17Okt-h'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
@@ -735,6 +749,7 @@ $('mp3In').onchange = async () => {
   const rec = {id:'cs_'+Date.now(), name:f.name.replace(/\.[^.]+$/,''), blob:f};
   try{ await idbPut(rec); userSounds.push(rec); }catch(e){ alert(String(e)); }
   refreshSoundUI();
+  if(AP){ const ok = await installUserSound(rec); if(!ok) alert(T('mp3Fail')); else resched(); }
 };
 
 const TEST_ID = 9999999;
@@ -812,7 +827,7 @@ $('ringStop').onclick = () => { stopAudio(); $('mRing').classList.remove('on'); 
 /* ---------- notifications ---------- */
 function ring(n){
   const snd = n && n.extra && n.extra.sound;
-  if(!snd || !userSounds.some(s => s.id === snd)) return;
+  if(!snd || !userSounds.some(s => s.id === snd) || installedSnd.has(snd)) return;
   $('ringT').textContent = n.title || ''; $('ringB').textContent = n.body || '';
   playSound(snd, true); $('mRing').classList.add('on');
 }
@@ -820,10 +835,11 @@ if(LN && LN.addListener){
   LN.addListener('localNotificationActionPerformed', e => ring(e.notification));
   LN.addListener('localNotificationReceived', n => ring(n));
 }
-const chanOf = id => soundFile(id) ? 'ps3_'+id : 'ps3_default';
+const chanOf = id => (soundFile(id) || installedSnd.has(id)) ? 'ps3_'+id : 'ps3_default';
 const mk = (o, snd) => Object.assign({}, o, {channelId: chanOf(snd), extra:{sound: snd || 'default'}}, soundFile(snd) ? {sound: soundFile(snd)} : {});
 
 async function ensureChannels(){
+  for(const u of userSounds) await installUserSound(u);
   const ids = ['default'].concat(BUILTIN.map(b => b.id), repoSounds.map(s => s.id));
   for(const id of ids){
     const ch = {id:'ps3_'+id, name:'ProSchedule - '+soundName(id), importance:5, visibility:1, vibration:true};
