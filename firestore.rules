@@ -4,13 +4,13 @@ service cloud.firestore {
 
     // ---------- ProSchedule (sync antara telefon) ----------
     // ID 20 aksara rawak = "kunci". Tiada senarai/padam, jadi orang lain tak boleh
-    // menjumpai ID. Hanya medan 'data' (teks) dan 'updated' dibenarkan, maksimum ~200 KB.
+    // menjumpai ID. Hanya medan 'data' (teks) dan 'updated' dibenarkan, maksimum ~500 KB.
     match /psync/{code} {
       allow get: if code.size() == 20;
       allow create, update: if code.size() == 20
         && request.resource.data.keys().hasOnly(['data', 'updated'])
         && request.resource.data.data is string
-        && request.resource.data.data.size() < 200000;
+        && request.resource.data.data.size() < 500000;
       allow list, delete: if false;
     }
 

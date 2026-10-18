@@ -278,7 +278,7 @@ const I = {
   dpAlarm:'Alarm ringkasan jadual', dpTime:'Masa alarm (10 malam – 7 pagi)', dpHint:'Berbunyi malam sebelum (10 malam ke atas) atau pagi hari tersebut (sehingga 7 pagi).', dpEmpty:'Tiada jadual pada hari ini.',
   alarmHead:'Senarai Alarm', newAlarm:'Alarm baru', fRepeat:'Ulang', once:'Sekali sahaja', daily:'Setiap hari', fSound:'Bunyi alarm', addAlarm:'+ Tambah ke senarai', noAlarm:'Tiada alarm.', del:'Padam',
   lblEsok:'jadual esok', lblIni:'jadual hari ini',
-  cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini menjadi bunyi alarm/notifikasi sebenar, walaupun app ditutup (Android 10 ke atas). Guna MP3 pendek (kurang 30 saat).', mp3Fail:'MP3 disimpan dalam app tetapi gagal dijadikan bunyi notifikasi (perlu Android 10 ke atas). Alarm akan guna bunyi lalai.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(MP3 saya)', sndDefault:'Lalai (sistem)',
+  cfgHead:'Tetapan', sndLib:'Pustaka bunyi alarm', addMp3:'+ Tambah MP3', mp3Note:'MP3 yang ditambah di sini dimainkan penuh (tiada had panjang) sebagai alarm walaupun app ditutup, berulang sehingga ditekan Berhenti (maksimum 10 minit).', mp3Fail:'MP3 gagal didaftarkan sebagai alarm. Alarm akan guna bunyi lalai.', mp3Big:'Fail terlalu besar (maks 10MB).', appOnly:'(MP3 saya)', sndDefault:'Lalai (sistem)',
   testHead:'Ujian Notifikasi', testSec:'Keluar dalam (saat)', testBtn:'Hantar ujian', testOk:'Notifikasi akan keluar dalam {n} saat. Minimize app atau kunci skrin untuk lihat.', testDenied:'Kebenaran notifikasi tidak diberi. Sila benarkan di Tetapan telefon.', testNA:'Notifikasi hanya berfungsi dalam APK.',
   ringStop:'Matikan',
   gAcc:'Akaun Google', gNone:'(belum dipilih)', gPick:'Pilih akaun', gSync:'Sync Google Calendar', gSyncing:'Sedang sync...', gDone:'Selesai: {n} jadual Google diimport dan jadual ProSchedule dihantar.', gPicked:'Akaun dipilih. Tekan Sync Google Calendar.', autoSync:'Auto sync setiap 1 jam', gLast:'Sync terakhir:', csHead:'Sync antara telefon (ID)', csHint:'Buat ID di satu telefon, masukkan ID yang sama di telefon lain. Jadual, alarm dan alarm harian sync bila app dibuka atau bila ada perubahan. Jangan kongsi ID dengan orang yang tak dipercayai.', csId:'ID anda', csNone:'(belum ada ID)', csCopy:'Salin', csNew:'Buat ID baru', csJoinL:'Atau masukkan ID dari telefon lain', csJoin:'Sambung', csNow:'Sync sekarang', csOff:'Putus ID', csBad:'ID tidak sah (perlu 20 huruf/nombor).', csCopied:'ID disalin.', csSyncing:'Sedang sync...', csDone:'Sync siap. Diterima dari awan: {n}', csQNew:'Buat ID baru? ID lama tidak lagi digunakan oleh telefon ini.', csQOff:'Putuskan sambungan ID di telefon ini?', csLast:'Sync awan terakhir:', gHint:'Alarm dan bunyi hanya dalam ProSchedule (APK). Jadual yang dihantar ke Google Calendar tiada alarm. Auto sync berjalan bila app dibuka.',
@@ -302,7 +302,7 @@ const I = {
   dpAlarm:'Schedule summary alarm', dpTime:'Alarm time (10 PM – 7 AM)', dpHint:'Rings the night before (10 PM onwards) or that morning (until 7 AM).', dpEmpty:'Nothing scheduled on this day.',
   alarmHead:'Alarm List', newAlarm:'New alarm', fRepeat:'Repeat', once:'Once', daily:'Every day', fSound:'Alarm sound', addAlarm:'+ Add to list', noAlarm:'No alarms.', del:'Delete',
   lblEsok:"tomorrow's schedule", lblIni:"today's schedule",
-  cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here become the real alarm/notification sound, even when the app is closed (Android 10 and up). Use a short MP3 (under 30 seconds).', mp3Fail:'MP3 saved in the app but could not be set as a notification sound (needs Android 10 or newer). Alarms will use the default sound.', mp3Big:'File too large (max 10MB).', appOnly:'(my MP3)', sndDefault:'Default (system)',
+  cfgHead:'Settings', sndLib:'Alarm sound library', addMp3:'+ Add MP3', mp3Note:'MP3s added here play in full (no length limit) as the alarm even when the app is closed, repeating until you tap Stop (10 minutes max).', mp3Fail:'MP3 could not be registered as an alarm. Alarms will use the default sound.', mp3Big:'File too large (max 10MB).', appOnly:'(my MP3)', sndDefault:'Default (system)',
   testHead:'Test Notification', testSec:'Fire in (seconds)', testBtn:'Send test', testOk:'Notification will appear in {n} seconds. Minimize the app or lock the screen to see it.', testDenied:'Notification permission not granted. Please allow it in phone Settings.', testNA:'Notifications only work in the APK.',
   ringStop:'Stop',
   gAcc:'Google account', gNone:'(not selected)', gPick:'Choose account', gSync:'Sync Google Calendar', gSyncing:'Syncing...', gDone:'Done: {n} Google schedules imported and ProSchedule schedules sent.', gPicked:'Account selected. Tap Sync Google Calendar.', autoSync:'Auto sync every 1 hour', gLast:'Last sync:', csHead:'Sync between phones (ID)', csHint:'Create an ID on one phone and enter the same ID on the other. Schedules, alarms and day alarms sync when the app opens or when something changes. Do not share the ID with people you do not trust.', csId:'Your ID', csNone:'(no ID yet)', csCopy:'Copy', csNew:'Create new ID', csJoinL:'Or enter the ID from another phone', csJoin:'Connect', csNow:'Sync now', csOff:'Disconnect', csBad:'Invalid ID (needs 20 letters/numbers).', csCopied:'ID copied.', csSyncing:'Syncing...', csDone:'Sync done. Received from cloud: {n}', csQNew:'Create a new ID? This phone will stop using the old ID.', csQOff:'Disconnect the ID on this phone?', csLast:'Last cloud sync:', gHint:'Alarms and sounds are only in ProSchedule (APK). Schedules sent to Google Calendar have no alarm. Auto sync runs while the app is open.',
@@ -350,6 +350,7 @@ function save(){
   localStorage.setItem('ps_imp', JSON.stringify(imp));
   localStorage.setItem('ps_gevents', JSON.stringify(gEvents));
   localStorage.setItem('ps_ghide', JSON.stringify(gHide));
+  localStorage.setItem('ps_cevents', JSON.stringify(cEvents));
   resched();
   try{ if(!csBusy) csSoon(); }catch(e){}
 }
@@ -386,11 +387,8 @@ async function installUserSound(u){
   if(installedSnd.has(u.id)) return true;
   try{
     const h = await AP.hasSound({id:u.id});
-    if(!h.has){
-      await AP.store({id:u.id, data: await toB64(u.blob)}); storedNative.add(u.id);
-      await AP.installSound({id:u.id, name:u.name});
-    }
-    installedSnd.add(u.id); return true;
+    if(!h.has) await AP.store({id:u.id, data: await toB64(u.blob)});
+    storedNative.add(u.id); installedSnd.add(u.id); return true;
   }catch(e){ console.log('install sound failed', e); return false; }
 }
 async function playSound(id, loop){
@@ -436,6 +434,8 @@ let calMap = J('ps_calmap', {});
 let imp = J('ps_imp', {on:false, ids:[]});
 let gEvents = J('ps_gevents', []);
 let gHide = J('ps_ghide', []);
+let cEvents = J('ps_cevents', []);   // jadual Google yang diterima dari telefon lain (melalui ID)
+const gkey = e => { const t = `${e.time}|${e.allDay ? 1 : 0}|${e.title}`; let h = 5381; for(let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return e.date + '_' + h.toString(36); };
 let gacc = J('ps_gacc', null);
 let autoSync = J('ps_auto', false);
 if(!localStorage.getItem('ps_auto_mig')){ autoSync = true; localStorage.setItem('ps_auto_mig','1'); localStorage.setItem('ps_auto','true'); }
@@ -448,7 +448,10 @@ const saveCal = () => {
   localStorage.setItem('ps_auto', JSON.stringify(autoSync));
 };
 const gmsg = t => { $('gMsg').textContent = t; };
-const allEvents = () => events.concat(gEvents.filter(g => !gHide.includes(g.id)));
+const allEvents = () => {
+  const lk = new Set(gEvents.map(g => g.k || (g.k = gkey(g))));
+  return events.concat(gEvents.filter(g => !gHide.includes(g.id)), cEvents.filter(c => !lk.has(c.key) && !gHide.includes(c.id)));
+};
 const tcol = e => e.src === 'g' ? '#4285F4' : TYPES[e.type];
 const tname = e => e.src === 'g' ? 'Google' : T('types')[e.type];
 const tlabel = e => e.allDay ? T('allDay') : e.time;
@@ -498,6 +501,7 @@ async function importSync(){
         out.push({id:`g${x.eventId}_${x.begin}`, src:'g', date:fmt(d), time:`${pad(d.getHours())}:${pad(d.getMinutes())}`, allDay:false, title, rem:10});
       }
     });
+    out.forEach(o => { o.k = gkey(o); });
     const next = out.slice(0, 800);
     if(JSON.stringify(next) !== JSON.stringify(gEvents)){
       gEvents = next; save(); renderCal(); renderDay(); renderDayPopup();
@@ -739,7 +743,7 @@ function refreshSoundUI(){
   renderCfg(); renderAlarms();
   fillSound($('alSound'), $('alSound').value); fillSound($('tsSound'), $('tsSound').value); fillSound($('evSndSel'), evSound);
 }
-$('btnCfg').onclick = () => { gmsg('versi: 17Okt-h'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
+$('btnCfg').onclick = () => { gmsg('versi: 17Okt-k'); refreshSoundUI(); renderG(); if(CAL && gacc) loadCals().catch(() => {}); $('mCfg').classList.add('on'); };
 $('cfgClose').onclick = () => { stopAudio(); $('mCfg').classList.remove('on'); };
 $('mp3Add').onclick = () => $('mp3In').click();
 $('mp3In').onchange = async () => {
@@ -763,7 +767,13 @@ $('testBtn').onclick = async () => {
     if(perm.display !== 'granted'){ alert(T('testDenied')); return; }
     await ensureChannels();
     const sec = Math.max(1, +$('testSec').value || 10);
-    await LN.schedule({notifications:[mk({id:TEST_ID, title:T('testTitle'), body:T('testBody'), schedule:{at:new Date(Date.now()+sec*1000), allowWhileIdle:true}}, $('tsSound').value)]});
+    const tsv = $('tsSound').value, tsAt = new Date(Date.now()+sec*1000);
+    const tsUser = userSounds.find(u => u.id === tsv);
+    if(AP && tsUser && await installUserSound(tsUser)){
+      await AP.scheduleOne({id:TEST_ID, at:tsAt.getTime(), title:T('testTitle'), body:T('testBody'), sound:tsv});
+    }else{
+      await LN.schedule({notifications:[mk({id:TEST_ID, title:T('testTitle'), body:T('testBody'), schedule:{at:tsAt, allowWhileIdle:true}}, tsv)]});
+    }
     alert(T('testOk').replace('{n}', sec) + '\n♪ ' + soundName($('tsSound').value));
   }catch(err){ alert(String(err)); }
 };
@@ -835,8 +845,8 @@ if(LN && LN.addListener){
   LN.addListener('localNotificationActionPerformed', e => ring(e.notification));
   LN.addListener('localNotificationReceived', n => ring(n));
 }
-const chanOf = id => (soundFile(id) || installedSnd.has(id)) ? 'ps3_'+id : 'ps3_default';
-const mk = (o, snd) => Object.assign({}, o, {channelId: chanOf(snd), extra:{sound: snd || 'default'}}, soundFile(snd) ? {sound: soundFile(snd)} : {});
+const chanOf = id => soundFile(id) ? 'ps3_'+id : 'ps3_default';
+const mk = (o, snd) => Object.assign({}, o, {channelId: chanOf(snd), smallIcon:'ic_stat_ps', extra:{sound: snd || 'default'}}, soundFile(snd) ? {sound: soundFile(snd)} : {});
 
 async function ensureChannels(){
   for(const u of userSounds) await installUserSound(u);
@@ -907,7 +917,14 @@ async function resched(){
       list.push(mk({id:3000000+Math.floor(base.getTime()/86400000), title:`${T('nDay')} (${ds})`, body:s.body, largeBody:s.large, schedule:{at, allowWhileIdle:true}}, a.sound));
     });
 
-    if(list.length) await LN.schedule({notifications:list});
+    const isNat = n => !!(n.extra && n.extra.sound && installedSnd.has(n.extra.sound));
+    const nat = list.filter(isNat), std = list.filter(n => !isNat(n));
+    if(AP){
+      try{
+        await AP.scheduleAlarms({items: nat.map(n => ({id:n.id, at:n.schedule.at.getTime(), title:n.title, body:n.largeBody || n.body, sound:n.extra.sound}))});
+      }catch(e){ console.log('native sched error', e); std.push(...nat); }
+    }
+    if(std.length) await LN.schedule({notifications:std});
   }catch(err){ console.log('resched error', err); }
 }
 
@@ -933,6 +950,7 @@ function renderCS(){
 function csSnapshot(){
   const m = {};
   events.forEach(e => { if(!e.uid) e.uid = rid(); m['e:'+e.uid] = {date:e.date, time:e.time, title:e.title, type:e.type, rem:e.rem, note:e.note || ''}; });
+  gEvents.slice(0, 800).forEach(g => { const k = g.k || (g.k = gkey(g)); m['g:'+k] = {date:g.date, time:g.time, title:String(g.title).slice(0, 120), allDay:!!g.allDay}; });
   alarms.forEach(a => { if(!a.uid) a.uid = rid(); m['a:'+a.uid] = {t:a.t, rep:a.rep, sound:a.sound, on:!!a.on, at:a.at || 0}; });
   Object.keys(dayAlarms).forEach(d => { const a = dayAlarms[d]; if(a) m['d:'+d] = {on:!!a.on, t:a.t, sound:a.sound}; });
   localStorage.setItem('ps_events', JSON.stringify(events));
@@ -956,6 +974,13 @@ function csApply(k, v){
     if(alarms.length >= 90) return 0;
     alarms.push(Object.assign({id:aCounter++, uid:id}, v)); return 1;
   }
+  if(t === 'g'){
+    const i = cEvents.findIndex(c => c.key === id);
+    if(v === null){ if(i < 0) return 0; cEvents.splice(i,1); return 1; }
+    if(i >= 0 || gEvents.some(g => g.k === id)) return 0;
+    cEvents.push({id:'gc_'+id, key:id, src:'g', date:v.date, time:v.time, allDay:!!v.allDay, title:v.title, rem:v.allDay ? 0 : 10});
+    return 1;
+  }
   if(t === 'd' && v){ dayAlarms[id] = v; return 1; }
   return 0;
 }
@@ -975,6 +1000,7 @@ async function csSync(mode, manual){
       if(k in snap) continue;
       const m = cs.meta[k];
       if(m.h === 'null') loc[k] = {v:null, ts:m.ts};
+      else if(m.h === '~') continue;
       else { loc[k] = {v:null, ts:now}; changed = true; }
     }
     if(mode === 'change' && !changed) return;
@@ -1000,12 +1026,14 @@ async function csSync(mode, manual){
       syncSoon();
     }
     if(push){
-      const body = {fields:{data:{stringValue:JSON.stringify(out)}, updated:{integerValue:String(now)}}};
+      const outStr = JSON.stringify(out);
+      if(outStr.length > 480000) throw new Error('Data terlalu besar untuk sync awan');
+      const body = {fields:{data:{stringValue:outStr}, updated:{integerValue:String(now)}}};
       const w = await fetch(csUrl(), {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
       if(!w.ok) throw new Error('HTTP ' + w.status + ' (tulis awan) ' + (await w.text()).slice(0,150));
     }
     const fin = csSnapshot(), meta = {};
-    Object.keys(out).forEach(k => { const e = out[k]; meta[k] = {ts:e.ts, h:JSON.stringify(e.v === null ? null : (k in fin ? fin[k] : null))}; });
+    Object.keys(out).forEach(k => { const e = out[k]; meta[k] = {ts:e.ts, h: e.v === null ? 'null' : (k in fin ? JSON.stringify(fin[k]) : (k[0] === 'g' ? '~' : 'null'))}; });
     cs.meta = meta; cs.last = Date.now(); csSave(); renderCS();
     if(manual || pulled) csMsg(T('csDone').replace('{n}', pulled));
   }catch(e){

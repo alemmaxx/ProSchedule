@@ -3,6 +3,7 @@ package com.proschedule.app;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -19,12 +20,28 @@ public class MainActivity extends BridgeActivity {
     registerPlugin(CalendarSyncPlugin.class);
     super.onCreate(savedInstanceState);
     setVolumeControlStream(AudioManager.STREAM_ALARM);
+    handleStop(getIntent());
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       try {
         createAlarmChannels();
       } catch (Exception e) {
         // jika gagal, JS akan cipta channel biasa sebagai fallback
       }
+    }
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
+    handleStop(intent);
+  }
+
+  // Tekan notifikasi alarm MP3 -> hentikan bunyi
+  private void handleStop(Intent i) {
+    if (i != null && i.getBooleanExtra("ps_stop", false)) {
+      try { stopService(new Intent(this, AlarmService.class)); } catch (Exception e) { }
+      i.removeExtra("ps_stop");
     }
   }
 
